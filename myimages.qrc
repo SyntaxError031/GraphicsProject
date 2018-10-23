@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>images/line_24px_1172557_easyicon.net.png</file>
+        <file>images/software_shape_rectangle_36.272727272727px_1183075_easyicon.net.png</file>
+        <file>images/software_shape_oval_36.272727272727px_1183073_easyicon.net.png</file>
+        <file>images/circle_24px_1148099_easyicon.net.png</file>
+    </qresource>
+</RCC>
