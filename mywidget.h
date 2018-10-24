@@ -16,8 +16,8 @@ class MyWidget : public QWidget
 public:
     explicit MyWidget(QWidget *parent = nullptr);
     ~MyWidget();
-    void draw();
     void drawLine();
+    void drawCircle();
     int mode;
 
 protected:
@@ -28,11 +28,9 @@ protected:
 
 private:
     Ui::MyWidget *ui;
-    QPixmap pix;
-    QPixmap tmpPix;
+    QPixmap *pix;
     QPoint startPoint;
     QPoint endPoint;
-    bool isDrawing;
 };
 
 #endif // MYWIDGET_H

@@ -7,10 +7,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m = new MyWidget;
-    m->setAttribute(Qt::WA_StyledBackground, true);
-    m->setStyleSheet("background-color:rgb(210, 220, 255)");
-    this->setCentralWidget(m);
+    board = new MyWidget;
+    board->setAttribute(Qt::WA_StyledBackground, true);
+    board->setStyleSheet("background-color:rgb(210, 220, 255)");
+    this->setCentralWidget(board);
+    label = new QLabel;
+    label->setMinimumSize(label->sizeHint());
+    label->setAlignment(Qt::AlignHCenter);
+    this->statusBar()->addWidget(label);
+    this->statusBar()->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
+    label->setText(" 就绪");
 }
 
 MainWindow::~MainWindow()
@@ -20,5 +26,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_line_triggered()
 {
-    m->mode = 1;
+    board->mode = LINE;
+    label->setText(" 画线");
+}
+
+void MainWindow::on_action_circle_triggered()
+{
+    board->mode = CIRCLE;
+    label->setText(" 画圆");
 }

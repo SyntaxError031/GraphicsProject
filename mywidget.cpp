@@ -1,15 +1,16 @@
 #include "mywidget.h"
 #include "ui_mywidget.h"
 #include <QtDebug>
+#include "mainwindow.h"
 
 MyWidget::MyWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MyWidget)
 {
     ui->setupUi(this);
-    pix = QPixmap(800, 600);
-    pix.fill(Qt::white);
-    mode = 0;
+    pix = new QPixmap(800, 600);
+    pix->fill(Qt::white);
+    mode = READY;
 }
 
 MyWidget::~MyWidget()
@@ -19,43 +20,44 @@ MyWidget::~MyWidget()
 
 void MyWidget::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        if(mode == 1) {
+        if(mode == LINE || mode == CIRCLE) {
             startPoint = event->pos();
-            qDebug() << "press mouse" << endl;
+//            qDebug() << "press mouse" << endl;
         }
-        isDrawing = true;
     }
 }
 
 void MyWidget::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
-        if(mode == 1) {                 // draw line
+        if(mode == LINE || mode == CIRCLE) {
             endPoint = event->pos();
 //            qDebug() << "move" << " ";
 //            drawLine();       // 鼠标拖动实时画线
         }
-        isDrawing = true;
     }
 }
 
 void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        if(mode == 1) {
+        if(mode == LINE) {
             endPoint = event->pos();
-            qDebug() << "leave" << endl;
+//            qDebug() << "leave" << endl;
             drawLine();         // 松开后画线
         }
-        isDrawing = false;
+        else if(mode == CIRCLE) {
+            endPoint = event->pos();
+            drawCircle();
+        }
     }
 }
 
 void MyWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
-    painter.drawPixmap(0, 0, 800, 600, pix);
+    painter.drawPixmap(0, 0, 800, 600, *pix);
 }
 
 void MyWidget::drawLine() {
-    QPainter painter(&pix);
+    QPainter painter(pix);
 //  pix.fill(Qt::white);
     int x1, x2, y1, y2;
     if(startPoint.x() <= endPoint.x()) {
@@ -89,8 +91,7 @@ void MyWidget::drawLine() {
                 if(d < 0) {
                     x++;
                     d += delta1;
-                }
-                else {
+                } else {
                     x++, y--;
                     d += delta2;
                 }
@@ -105,8 +106,7 @@ void MyWidget::drawLine() {
                 if(d < 0) {
                     y--, x++;
                     d += delta2;
-                }
-                else {
+                } else {
                     y--;
                     d += delta1;
                 }
@@ -121,8 +121,7 @@ void MyWidget::drawLine() {
                 if(d < 0) {
                     x++, y++;
                     d += delta2;
-                }
-                else {
+                } else {
                     x++;
                     d += delta1;
                 }
@@ -137,8 +136,7 @@ void MyWidget::drawLine() {
                 if(d < 0) {
                     y++;
                     d += delta1;
-                }
-                else {
+                } else {
                     y++, x++;
                     d += delta2;
                 }
@@ -147,6 +145,34 @@ void MyWidget::drawLine() {
         }
     }
 
+    update();
+}
+
+void MyWidget::drawCircle() {
+    QPainter painter(pix);
+    int centerX, centerY, r;
+    int x, y, p;
+    centerX = (startPoint.x()+endPoint.x()) / 2;
+    centerY = (startPoint.y()+endPoint.y()) / 2;
+    r = (int)(sqrt((startPoint.x()-endPoint.x())*(startPoint.x()-endPoint.x()) + \
+             (startPoint.y()-endPoint.y())*(startPoint.y()-endPoint.y()))/2.0);
+    x = 0, y = r;
+    p = 3 - 2*r;
+    for(; x <= y; x++) {
+        painter.drawPoint(x+centerX, y+centerY);
+        painter.drawPoint(y+centerX, x+centerY);
+        painter.drawPoint(y+centerX, -x+centerY);
+        painter.drawPoint(x+centerX, -y+centerY);
+        painter.drawPoint(-x+centerX, -y+centerY);
+        painter.drawPoint(-y+centerX, -x+centerY);
+        painter.drawPoint(-y+centerX, x+centerY);
+        painter.drawPoint(-x+centerX, y+centerY);
+        if(p >= 0) {
+            p += (4*(x-y) + 10);
+            y--;
+        } else
+            p += (4*x + 6);
+    }
     update();
 }
 
