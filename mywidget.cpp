@@ -11,6 +11,7 @@ MyWidget::MyWidget(QWidget *parent) :
     pix = new QPixmap(800, 600);
     pix->fill(Qt::white);
     mode = READY;
+    lineWidth = 1;
 }
 
 MyWidget::~MyWidget()
@@ -20,7 +21,7 @@ MyWidget::~MyWidget()
 
 void MyWidget::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        if(mode == LINE || mode == CIRCLE) {
+        if(mode == LINE || mode == CIRCLE || mode == PENCIL) {
             startPoint = event->pos();
 //            qDebug() << "press mouse" << endl;
         }
@@ -29,10 +30,14 @@ void MyWidget::mousePressEvent(QMouseEvent *event) {
 
 void MyWidget::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
-        if(mode == LINE || mode == CIRCLE) {
+        if(mode == LINE || mode == CIRCLE || mode == PENCIL) {
             endPoint = event->pos();
 //            qDebug() << "move" << " ";
 //            drawLine();       // 鼠标拖动实时画线
+        }
+        if(mode == PENCIL) {
+            drawLine();
+            startPoint = event->pos();      // 终点变为下一次的起点
         }
     }
 }
@@ -58,6 +63,10 @@ void MyWidget::paintEvent(QPaintEvent *) {
 
 void MyWidget::drawLine() {
     QPainter painter(pix);
+    QPen pen;
+    pen.setWidth(lineWidth);
+    pen.setColor(color);
+    painter.setPen(pen);
 //  pix.fill(Qt::white);
     int x1, x2, y1, y2;
     if(startPoint.x() <= endPoint.x()) {
@@ -149,7 +158,14 @@ void MyWidget::drawLine() {
 }
 
 void MyWidget::drawCircle() {
+    /* Bresenham 画圆算法
+     * 鼠标按下时的点为起始点，松开时的点为终点，形成的直线即为圆的直径
+     */
     QPainter painter(pix);
+    QPen pen;
+    pen.setWidth(lineWidth);
+    pen.setColor(color);
+    painter.setPen(pen);
     int centerX, centerY, r;
     int x, y, p;
     centerX = (startPoint.x()+endPoint.x()) / 2;

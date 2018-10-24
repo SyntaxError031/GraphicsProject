@@ -3,7 +3,10 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include <QDialog>
 #include "mywidget.h"
+#include <QSpinBox>
+#include <QColorDialog>
 
 namespace Ui {
 class MainWindow;
@@ -19,15 +22,19 @@ public:
 
 private slots:
     void on_action_line_triggered();
-
     void on_action_circle_triggered();
+    void on_action_pencil_triggered();    
+    void changeLineWidth();
+
+    void on_action_color_triggered();
 
 private:
     Ui::MainWindow *ui;
     MyWidget *board;    // MainWindow上绘制图形的部分
     QLabel *label;      // 状态栏上显示状态
+    QSpinBox *line_width;
 };
 
-enum {READY, LINE, CIRCLE, RECT};
+enum {READY, PENCIL, LINE, CIRCLE, RECT};
 
 #endif // MAINWINDOW_H

@@ -18,7 +18,10 @@ public:
     ~MyWidget();
     void drawLine();
     void drawCircle();
+    void pencilDraw();
     int mode;
+    int lineWidth;
+    QColor color;
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -31,6 +34,7 @@ private:
     QPixmap *pix;
     QPoint startPoint;
     QPoint endPoint;
+
 };
 
 #endif // MYWIDGET_H

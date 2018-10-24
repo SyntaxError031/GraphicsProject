@@ -17,6 +17,15 @@ MainWindow::MainWindow(QWidget *parent) :
     this->statusBar()->addWidget(label);
     this->statusBar()->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
     label->setText(" 就绪");
+    QLabel *setLineWidthReminder = new QLabel(" 粗细: ");
+    ui->mainToolBar->addWidget(setLineWidthReminder);
+    line_width = new QSpinBox;
+    line_width->setRange(1, 5);
+    line_width->setValue(1);
+    line_width->setSuffix(" px");
+    ui->mainToolBar->addWidget(line_width);
+    QObject::connect(line_width, SIGNAL(valueChanged(int)), this, SLOT(changeLineWidth()));
+
 }
 
 MainWindow::~MainWindow()
@@ -34,4 +43,21 @@ void MainWindow::on_action_circle_triggered()
 {
     board->mode = CIRCLE;
     label->setText(" 画圆");
+}
+
+void MainWindow::on_action_pencil_triggered()
+{
+    board->mode = PENCIL;
+    label->setText(" 铅笔");
+}
+
+void MainWindow::changeLineWidth() {
+    board-> lineWidth = line_width->value();
+}
+
+void MainWindow::on_action_color_triggered()
+{
+    QColor color = QColorDialog::getColor(Qt::red, this, tr("设置画笔颜色"));
+    qDebug() << color;
+    board->color = color;
 }

@@ -35,9 +35,6 @@
    <addaction name="menu_F"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
-   <property name="styleSheet">
-    <string notr="true">color:rgb(204,204,204)</string>
-   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
@@ -56,9 +53,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_pencil"/>
    <addaction name="action_line"/>
    <addaction name="action_circle"/>
    <addaction name="action_rectangle"/>
+   <addaction name="action_color"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="maximumSize">
@@ -125,6 +124,30 @@
    </property>
    <property name="toolTip">
     <string>矩形</string>
+   </property>
+  </action>
+  <action name="action_pencil">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/pencil_24px_1138713_easyicon.net.png</normaloff>:/image/images/pencil_24px_1138713_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>pencil</string>
+   </property>
+   <property name="toolTip">
+    <string>铅笔</string>
+   </property>
+  </action>
+  <action name="action_color">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/Color_Palette_32px_544575_easyicon.net.png</normaloff>:/image/images/Color_Palette_32px_544575_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>color</string>
+   </property>
+   <property name="toolTip">
+    <string>颜色</string>
    </property>
   </action>
  </widget>
