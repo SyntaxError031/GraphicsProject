@@ -21,7 +21,7 @@ MyWidget::~MyWidget()
 
 void MyWidget::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        if(mode == LINE || mode == CIRCLE || mode == PENCIL) {
+        if(mode == LINE || mode == CIRCLE || mode == PENCIL || mode == ELLIPSE || mode == RECT) {
             startPoint = event->pos();
 //            qDebug() << "press mouse" << endl;
         }
@@ -30,7 +30,7 @@ void MyWidget::mousePressEvent(QMouseEvent *event) {
 
 void MyWidget::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
-        if(mode == LINE || mode == CIRCLE || mode == PENCIL) {
+        if(mode == LINE || mode == CIRCLE || mode == PENCIL || mode == ELLIPSE || mode == RECT) {
             endPoint = event->pos();
 //            qDebug() << "move" << " ";
 //            drawLine();       // 鼠标拖动实时画线
@@ -53,6 +53,14 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
             endPoint = event->pos();
             drawCircle();
         }
+        else if(mode == ELLIPSE) {
+            endPoint = event->pos();
+            drawEllipse();
+        }
+        else if(mode == RECT) {
+            endPoint = event->pos();
+            drawRectangle();
+        }
     }
 }
 
@@ -70,12 +78,12 @@ void MyWidget::drawLine() {
 //  pix.fill(Qt::white);
     int x1, x2, y1, y2;
     if(startPoint.x() <= endPoint.x()) {
-        x1 = startPoint.x(), x2 = endPoint.x();
-        y1 = startPoint.y(), y2 = endPoint.y();
+        x1 = startPoint.x(); x2 = endPoint.x();
+        y1 = startPoint.y(); y2 = endPoint.y();
     }
     else {
-        x1 = endPoint.x(), x2 = startPoint.x();
-        y1 = endPoint.y(), y2 = startPoint.y();
+        x1 = endPoint.x(); x2 = startPoint.x();
+        y1 = endPoint.y(); y2 = startPoint.y();
     }
 //    qDebug() << x1 << " " << y1 << " " << x2 << " " << y2;
 //    painter.drawLine(QPoint(x1,y1), QPoint(x2,y2));
@@ -95,13 +103,13 @@ void MyWidget::drawLine() {
         // 0 <= k <= 1
         if(y1 >= y2 && (y1-y2 <= x2-x1)) {
             d = 2*a - b;
-            delta1 = 2*a, delta2 = 2*(a-b);
+            delta1 = 2*a; delta2 = 2*(a-b);
             while(x < x2) {
                 if(d < 0) {
                     x++;
                     d += delta1;
                 } else {
-                    x++, y--;
+                    x++; y--;
                     d += delta2;
                 }
                 painter.drawPoint(x, y);
@@ -110,10 +118,10 @@ void MyWidget::drawLine() {
         // k > 1
         else if(y1 > y2 && (y1-y2 > x2-x1)) {
             d = a - 2*b;
-            delta1 = -2*b, delta2 = 2*(a-b);
+            delta1 = -2*b; delta2 = 2*(a-b);
             while(y > y2) {
                 if(d < 0) {
-                    y--, x++;
+                    y--; x++;
                     d += delta2;
                 } else {
                     y--;
@@ -125,10 +133,10 @@ void MyWidget::drawLine() {
         // -1 <= k < 0
         else if(y1 < y2 && (y2-y1 <= x2-x1)) {
             d = 2*a + b;
-            delta1 = 2*a, delta2 = 2*(a+b);
+            delta1 = 2*a; delta2 = 2*(a+b);
             while(x < x2) {
                 if(d < 0) {
-                    x++, y++;
+                    x++; y++;
                     d += delta2;
                 } else {
                     x++;
@@ -140,13 +148,13 @@ void MyWidget::drawLine() {
         // k < -1
         else if(y1 < y2 && (y2-y1 > x2-x1)) {
             d = a + 2*b;
-            delta1 = 2*b, delta2 = 2*(a+b);
+            delta1 = 2*b; delta2 = 2*(a+b);
             while(y < y2) {
                 if(d < 0) {
                     y++;
                     d += delta1;
                 } else {
-                    y++, x++;
+                    y++; x++;
                     d += delta2;
                 }
                 painter.drawPoint(x, y);
@@ -172,7 +180,7 @@ void MyWidget::drawCircle() {
     centerY = (startPoint.y()+endPoint.y()) / 2;
     r = (int)(sqrt((startPoint.x()-endPoint.x())*(startPoint.x()-endPoint.x()) + \
              (startPoint.y()-endPoint.y())*(startPoint.y()-endPoint.y()))/2.0);
-    x = 0, y = r;
+    x = 0; y = r;
     p = 3 - 2*r;
     for(; x <= y; x++) {
         painter.drawPoint(x+centerX, y+centerY);
@@ -189,6 +197,73 @@ void MyWidget::drawCircle() {
         } else
             p += (4*x + 6);
     }
+    update();
+}
+
+void MyWidget::drawEllipse() {
+    QPainter painter(pix);
+    QPen pen;
+    pen.setWidth(lineWidth);
+    pen.setColor(color);
+    painter.setPen(pen);
+
+    int rx = abs(startPoint.x()-endPoint.x())/2;
+    int ry = abs(startPoint.y()-endPoint.y())/2;
+    int centerX = (startPoint.x()+endPoint.x()) / 2;
+    int centerY = (startPoint.y()+endPoint.y()) / 2;
+    int x = 0, y = ry, p = 4*ry*ry-4*rx*rx*ry-rx*rx;
+    while(ry*ry*x <= rx*rx*y) {     // 斜率绝对值小于1
+        painter.drawPoint(x+centerX, y+centerY);
+        painter.drawPoint(-x+centerX, y+centerY);
+        painter.drawPoint(-x+centerX, -y+centerY);
+        painter.drawPoint(x+centerX, -y+centerY);
+        if(p >= 0) {
+            p += (4*ry*ry*(2*x+3)+rx*rx*(8-8*y));
+            y--;
+        }
+        else {
+            p += 4*ry*ry*(2*x+3);
+        }
+        x++;
+    }
+    while(y >= 0) {
+        painter.drawPoint(x+centerX, y+centerY);
+        painter.drawPoint(-x+centerX, y+centerY);
+        painter.drawPoint(-x+centerX, -y+centerY);
+        painter.drawPoint(x+centerX, -y+centerY);
+        if(p >= 0) {
+            p += (4*rx*rx*(3-2*y));
+        }
+        else {
+            p += (ry*ry*(8*x+8)+4*rx*rx*(3-2*y));
+            x++;
+        }
+        y--;
+    }
+    update();
+}
+
+void MyWidget::drawRectangle() {
+    QPainter painter(pix);
+    QPen pen;
+    pen.setWidth(lineWidth);
+    pen.setColor(color);
+    painter.setPen(pen);
+
+    int xMin = qMin(startPoint.x(), endPoint.x());
+    int xMax = qMax(startPoint.x(), endPoint.x());
+    int yMax = qMax(startPoint.y(), endPoint.y());
+    int yMin = qMin(startPoint.y(), endPoint.y());
+
+    for(int i = xMin; i <= xMax; i++) {
+        painter.drawPoint(i, yMin);
+        painter.drawPoint(i, yMax);
+    }
+    for(int i = yMin; i < yMax; i++) {
+        painter.drawPoint(xMin, i);
+        painter.drawPoint(xMax, i);
+    }
+
     update();
 }
 

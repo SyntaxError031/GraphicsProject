@@ -19,6 +19,8 @@ public:
     void drawLine();
     void drawCircle();
     void pencilDraw();
+    void drawEllipse();
+    void drawRectangle();
     int mode;
     int lineWidth;
     QColor color;

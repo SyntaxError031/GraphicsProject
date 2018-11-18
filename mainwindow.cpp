@@ -61,3 +61,15 @@ void MainWindow::on_action_color_triggered()
     qDebug() << color;
     board->color = color;
 }
+
+void MainWindow::on_action_ellipse_triggered()
+{
+    board->mode = ELLIPSE;
+    label->setText(" 椭圆");
+}
+
+void MainWindow::on_action_rectangle_triggered()
+{
+    board->mode = RECT;
+    label->setText(" 矩形");
+}

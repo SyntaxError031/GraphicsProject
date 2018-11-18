@@ -28,6 +28,10 @@ private slots:
 
     void on_action_color_triggered();
 
+    void on_action_ellipse_triggered();
+
+    void on_action_rectangle_triggered();
+
 private:
     Ui::MainWindow *ui;
     MyWidget *board;    // MainWindow上绘制图形的部分
@@ -35,6 +39,6 @@ private:
     QSpinBox *line_width;
 };
 
-enum {READY, PENCIL, LINE, CIRCLE, RECT};
+enum {READY, PENCIL, LINE, CIRCLE, RECT, ELLIPSE};
 
 #endif // MAINWINDOW_H

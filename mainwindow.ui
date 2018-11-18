@@ -57,6 +57,7 @@
    <addaction name="action_line"/>
    <addaction name="action_circle"/>
    <addaction name="action_rectangle"/>
+   <addaction name="action_ellipse"/>
    <addaction name="action_color"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
@@ -148,6 +149,18 @@
    </property>
    <property name="toolTip">
     <string>颜色</string>
+   </property>
+  </action>
+  <action name="action_ellipse">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/software_shape_oval_36.272727272727px_1183073_easyicon.net.png</normaloff>:/image/images/software_shape_oval_36.272727272727px_1183073_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>ellipse</string>
+   </property>
+   <property name="toolTip">
+    <string>椭圆</string>
    </property>
   </action>
  </widget>
