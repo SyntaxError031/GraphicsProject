@@ -27,11 +27,20 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    mywidget.cpp
+    mywidget.cpp \
+    line.cpp \
+    circle.cpp \
+    ellipse.cpp \
+    rectangle.cpp
 
 HEADERS += \
         mainwindow.h \
-    mywidget.h
+    mywidget.h \
+    simplefigure.h \
+    line.h \
+    circle.h \
+    ellipse.h \
+    rectangle.h
 
 FORMS += \
         mainwindow.ui \

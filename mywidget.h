@@ -4,6 +4,11 @@
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
+#include "simplefigure.h"
+#include "line.h"
+#include "circle.h"
+#include "ellipse.h"
+#include "rectangle.h"
 
 namespace Ui {
 class MyWidget;
@@ -21,6 +26,8 @@ public:
     void pencilDraw();
     void drawEllipse();
     void drawRectangle();
+    void drawBuffer();
+    void clearBuffer();
     int mode;
     int lineWidth;
     QColor color;
@@ -36,7 +43,8 @@ private:
     QPixmap *pix;
     QPoint startPoint;
     QPoint endPoint;
-
+    SimpleFigure *figure;
+    vector<QPoint> exists;      // 保存所有在画布上的点
 };
 
 #endif // MYWIDGET_H
