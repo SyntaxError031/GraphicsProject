@@ -15,3 +15,11 @@ void Rectangle::draw() {
         buffer.push_back(new QPoint(xMax, i));
     }
 }
+
+void Rectangle::drawBorder() {
+
+}
+
+void Rectangle::generateControlBtn() {
+
+}

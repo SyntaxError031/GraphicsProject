@@ -39,6 +39,6 @@ private:
     QSpinBox *line_width;
 };
 
-enum {READY, PENCIL, LINE, CIRCLE, RECT, ELLIPSE};
+
 
 #endif // MAINWINDOW_H

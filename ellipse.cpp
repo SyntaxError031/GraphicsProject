@@ -1,6 +1,10 @@
 #include "ellipse.h"
 
 void Ellipse::draw() {
+    /* 中点椭圆生成算法
+     * 鼠标左键按下并拖动形成的矩形的内切椭圆
+     */
+
     int rx = abs(startPoint.x()-endPoint.x())/2;
     int ry = abs(startPoint.y()-endPoint.y())/2;
     int centerX = (startPoint.x()+endPoint.x()) / 2;
@@ -34,4 +38,12 @@ void Ellipse::draw() {
         }
         y--;
     }
+}
+
+void Ellipse::drawBorder() {
+
+}
+
+void Ellipse::generateControlBtn() {
+
 }

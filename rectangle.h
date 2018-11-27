@@ -7,6 +7,8 @@ class Rectangle : public SimpleFigure {
 public:
     void draw();
     ~Rectangle() {}
+    void drawBorder();
+    void generateControlBtn();
 };
 
 #endif // RECTANGLE_H

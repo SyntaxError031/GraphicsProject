@@ -7,6 +7,8 @@ class Ellipse : public SimpleFigure {
 public:
     void draw();
     ~Ellipse() {}
+    void drawBorder();
+    void generateControlBtn();
 };
 
 #endif // ELLIPSE_H

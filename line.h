@@ -7,6 +7,8 @@ class Line : public SimpleFigure {
 public:
     ~Line() {}
     void draw();
+    void generateControlBtn();
+    void drawBorder();
 };
 
 #endif // LINE_H

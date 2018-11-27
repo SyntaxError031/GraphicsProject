@@ -9,10 +9,14 @@
 #include "circle.h"
 #include "ellipse.h"
 #include "rectangle.h"
+#include <QRubberBand>
 
 namespace Ui {
 class MyWidget;
 }
+
+enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE};
+enum Status {READY, DRAWING, EDITING, EDITABLE};
 
 class MyWidget : public QWidget
 {
@@ -28,6 +32,9 @@ public:
     void drawRectangle();
     void drawBuffer();
     void clearBuffer();
+    void drawControlBtn();
+    void clearControlBtn();
+    int isInControlBtn(QPoint point);
     int mode;
     int lineWidth;
     QColor color;
@@ -41,10 +48,14 @@ protected:
 private:
     Ui::MyWidget *ui;
     QPixmap *pix;
-    QPoint startPoint;
-    QPoint endPoint;
+    QPoint origin;
     SimpleFigure *figure;
-    vector<QPoint> exists;      // 保存所有在画布上的点
+    vector<QColor> preBuffer;      // 保存编辑状态的点原来的颜色
+    QRubberBand *rubberBand;
+    vector<vector<QColor>> preControlBtn;    // 存储绘制为控制按钮点以前的颜色
+    Status status;
 };
+
+
 
 #endif // MYWIDGET_H

@@ -2,15 +2,15 @@
 
 void Circle::draw() {
     /* Bresenham 画圆算法
-     * 鼠标按下时的点为起始点，松开时的点为终点，形成的直线即为圆的直径
+     * 鼠标左键按下并拖动形成的矩形的内切圆(圆心靠近起点)
      */
 
     int centerX, centerY, r;
     int x, y, p;
-    centerX = (startPoint.x()+endPoint.x()) / 2;
-    centerY = (startPoint.y()+endPoint.y()) / 2;
-    r = (int)(sqrt((startPoint.x()-endPoint.x())*(startPoint.x()-endPoint.x()) + \
-             (startPoint.y()-endPoint.y())*(startPoint.y()-endPoint.y()))/2.0);
+    r = qMin(abs(startPoint.x()-endPoint.x()), abs(startPoint.y()-endPoint.y())) / 2;
+    centerX = (startPoint.x() < endPoint.x()) ? (startPoint.x() + r) : (startPoint.x() - r);
+    centerY = (startPoint.y() < endPoint.y()) ? (startPoint.y() + r) : (startPoint.y() - r);
+
     x = 0; y = r;
     p = 3 - 2*r;
     for(; x <= y; x++) {
@@ -28,4 +28,12 @@ void Circle::draw() {
         } else
             p += (4*x + 6);
     }
+}
+
+void Circle::drawBorder() {
+
+}
+
+void Circle::generateControlBtn() {
+
 }
