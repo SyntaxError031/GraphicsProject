@@ -9,6 +9,9 @@ public:
     ~Rectangle() {}
     void drawBorder();
     void generateControlBtn();
+
+private:
+    int xMin, yMin, xMax, yMax;
 };
 
 #endif // RECTANGLE_H

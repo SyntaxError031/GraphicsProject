@@ -1,10 +1,10 @@
 #include "rectangle.h"
 
 void Rectangle::draw() {
-    int xMin = qMin(startPoint.x(), endPoint.x());
-    int xMax = qMax(startPoint.x(), endPoint.x());
-    int yMax = qMax(startPoint.y(), endPoint.y());
-    int yMin = qMin(startPoint.y(), endPoint.y());
+    xMin = qMin(startPoint.x(), endPoint.x());
+    xMax = qMax(startPoint.x(), endPoint.x());
+    yMax = qMax(startPoint.y(), endPoint.y());
+    yMin = qMin(startPoint.y(), endPoint.y());
 
     for(int i = xMin; i <= xMax; i++) {
         buffer.push_back(new QPoint(i, yMin));
@@ -21,5 +21,13 @@ void Rectangle::drawBorder() {
 }
 
 void Rectangle::generateControlBtn() {
-
+    vector<QPoint*> btn;
+    btn = {new QPoint(xMin-4, yMin-2), new QPoint(xMin, yMin+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(xMin-4, yMax-2), new QPoint(xMin, yMax+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(xMax, yMin-2), new QPoint(xMax+4, yMin+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(xMax, yMax-2), new QPoint(xMax+4, yMax+2)};
+    controlBtn.push_back(btn);
 }

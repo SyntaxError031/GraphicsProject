@@ -116,7 +116,14 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
             if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT) {
                 rubberBand->hide();
                 rubberBand = NULL;
+                figure->setEndPoint(event->pos());
+                figure->draw();
+                drawBuffer();
+                figure->generateControlBtn();
+                drawControlBtn();
+                status = EDITABLE;
             }
+            /*
             if(mode == LINE) {
                 figure->setEndPoint(event->pos());
                 figure->draw();
@@ -129,6 +136,9 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                 figure->setEndPoint(event->pos());
                 figure->draw();
                 drawBuffer();
+                figure->generateControlBtn();
+                drawControlBtn();
+                status = EDITABLE;
             }
             else if(mode == ELLIPSE) {
                 figure->setEndPoint(event->pos());
@@ -140,6 +150,7 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                 figure->draw();
                 drawBuffer();
             }
+            */
         }
         else if(status == EDITING) {
             status = EDITABLE;
@@ -172,12 +183,19 @@ void MyWidget::drawBuffer() {
 void MyWidget::drawControlBtn() {
     /* 保存控制按钮原来的颜色 */
     QImage img = pix->toImage();
-    vector<QColor> tmp(figure->controlBtn[0].size());
-    preControlBtn.resize(figure->controlBtn.size(), tmp);
+    preControlBtn.resize(figure->controlBtn.size(), vector<QColor>(25));
     for(int i = 0; i < figure->controlBtn.size(); i++) {
-        for(int j = 0; j < figure->controlBtn[i].size(); j++)
-            preControlBtn[i][j] = img.pixelColor(*figure->controlBtn[i][j]);
+//        for(int j = 0; j < figure->controlBtn[i].size(); j++)
+//            preControlBtn[i][j] = img.pixelColor(*figure->controlBtn[i][j]);
+        int cnt = 0;
+        int xMin = figure->controlBtn[i][0]->x(), xMax =  figure->controlBtn[i][1]->x();
+        int yMin = figure->controlBtn[i][0]->y(), yMax = figure->controlBtn[i][1]->y();
+        for(int j = xMin; j <= xMax; j++) {
+            for(int k = yMin; k <= yMax; k++)
+                preControlBtn[i][cnt++] = img.pixelColor(j, k);
+        }
     }
+    /*
     QPainter painter(pix);
     QPen pen;
     for(int i = 0; i < figure->controlBtn.size(); i++) {
@@ -192,6 +210,14 @@ void MyWidget::drawControlBtn() {
             painter.drawPoint(*figure->controlBtn[i][j]);
         }
     }
+    */
+    QPainter painter(pix);
+    painter.setPen(QPen(Qt::black));
+    painter.setBrush(QBrush(Qt::white));
+    for(int i = 0; i < figure->controlBtn.size(); i++) {
+        int x = figure->controlBtn[i][0]->x(), y = figure->controlBtn[i][0]->y();
+        painter.drawRect(x, y, 4, 4);
+    }
     update();
 }
 
@@ -199,11 +225,12 @@ void MyWidget::clearControlBtn() {
     QPainter painter(pix);
     QPen pen;
     /* 将控制按钮恢复为原来的颜色 */
-    for(int i = 0; i < figure->controlBtn.size(); i++) {
-        for(int j = 0; j < figure->controlBtn[i].size(); j++) {
+    for(int i = 0; i < preControlBtn.size(); i++) {
+        int x = figure->controlBtn[i][0]->x(), y = figure->controlBtn[i][0]->y();
+        for(int j = 0; j < preControlBtn[i].size(); j++) {
             pen.setColor(preControlBtn[i][j]);
             painter.setPen(pen);
-            painter.drawPoint(*figure->controlBtn[i][j]);
+            painter.drawPoint(QPoint(x+j/5, y+j%5));
         }
     }
     update();
@@ -231,6 +258,7 @@ int MyWidget::isInControlBtn(QPoint point) {
      * @return 控制按钮的序号，如果不在，返回-1
      */
     if(figure) {
+    /*
         int i;
         for(i = 0; i < figure->controlBtn.size(); i++) {
             int xMin = figure->controlBtn[i][9]->x(), xMax = figure->controlBtn[i][23]->x();
@@ -240,8 +268,19 @@ int MyWidget::isInControlBtn(QPoint point) {
         }
         if(i == figure->controlBtn.size())
             return -1;
+    */
+        int i;
+        for(i = 0; i < figure->controlBtn.size(); i++) {
+            int xMin = figure->controlBtn[i][0]->x(), xMax = figure->controlBtn[i][1]->x();
+            int yMin = figure->controlBtn[i][0]->y(), yMax = figure->controlBtn[i][1]->y();
+            if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
+                return i;
+        }
+        if(i == figure->controlBtn.size())
+            return -1;
     }
-    return -1;
+
+    return -1;       
 }
 
 void MyWidget::paintEvent(QPaintEvent *) {

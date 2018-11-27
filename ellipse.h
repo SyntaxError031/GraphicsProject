@@ -9,6 +9,9 @@ public:
     ~Ellipse() {}
     void drawBorder();
     void generateControlBtn();
+
+private:
+    int rx, ry, centerX, centerY;
 };
 
 #endif // ELLIPSE_H

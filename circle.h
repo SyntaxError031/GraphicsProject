@@ -9,6 +9,8 @@ public:
     void draw();
     void drawBorder();
     void generateControlBtn();
+private:
+    int centerX, centerY, r;
 };
 
 #endif // CIRCLE_H

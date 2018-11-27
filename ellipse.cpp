@@ -5,10 +5,10 @@ void Ellipse::draw() {
      * 鼠标左键按下并拖动形成的矩形的内切椭圆
      */
 
-    int rx = abs(startPoint.x()-endPoint.x())/2;
-    int ry = abs(startPoint.y()-endPoint.y())/2;
-    int centerX = (startPoint.x()+endPoint.x()) / 2;
-    int centerY = (startPoint.y()+endPoint.y()) / 2;
+    rx = abs(startPoint.x()-endPoint.x())/2;
+    ry = abs(startPoint.y()-endPoint.y())/2;
+    centerX = (startPoint.x()+endPoint.x()) / 2;
+    centerY = (startPoint.y()+endPoint.y()) / 2;
     int x = 0, y = ry, p = 4*ry*ry-4*rx*rx*ry-rx*rx;
     while(ry*ry*x <= rx*rx*y) {     // 斜率绝对值小于1
         buffer.push_back(new QPoint(x+centerX, y+centerY));
@@ -45,5 +45,14 @@ void Ellipse::drawBorder() {
 }
 
 void Ellipse::generateControlBtn() {
+    vector<QPoint*> btn;
+    btn = {new QPoint(centerX-rx-2, centerY-ry-2), new QPoint(centerX-rx+2, centerY-ry+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(centerX-rx-2, centerY+ry-2), new QPoint(centerX-rx+2, centerY+ry+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(centerX+rx-2, centerY-ry-2), new QPoint(centerX+rx+2, centerY-ry+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(centerX+rx-2, centerY+ry-2), new QPoint(centerX+rx+2, centerY+ry+2)};
+    controlBtn.push_back(btn);
 
 }

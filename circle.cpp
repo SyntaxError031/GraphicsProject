@@ -5,7 +5,6 @@ void Circle::draw() {
      * 鼠标左键按下并拖动形成的矩形的内切圆(圆心靠近起点)
      */
 
-    int centerX, centerY, r;
     int x, y, p;
     r = qMin(abs(startPoint.x()-endPoint.x()), abs(startPoint.y()-endPoint.y())) / 2;
     centerX = (startPoint.x() < endPoint.x()) ? (startPoint.x() + r) : (startPoint.x() - r);
@@ -35,5 +34,15 @@ void Circle::drawBorder() {
 }
 
 void Circle::generateControlBtn() {
+    vector<QPoint*> btn;
+    btn = {new QPoint(centerX-r-2, centerY-r-2), new QPoint(centerX-r+2, centerY-r+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(centerX-r-2, centerY+r-2), new QPoint(centerX-r+2, centerY+r+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(centerX+r-2, centerY-r-2), new QPoint(centerX+r+2, centerY-r+2)};
+    controlBtn.push_back(btn);
+    btn = {new QPoint(centerX+r-2, centerY+r-2), new QPoint(centerX+r+2, centerY+r+2)};
+    controlBtn.push_back(btn);
+
 
 }
