@@ -40,11 +40,13 @@ void Ellipse::draw() {
     }
 }
 
-void Ellipse::drawBorder() {
-
+void Ellipse::generateBorder() {
+    border = {centerX-rx, centerY-ry, centerX+rx, centerY+ry};
 }
 
 void Ellipse::generateControlBtn() {
+    if(startPoint == endPoint)
+        return ;
     vector<QPoint*> btn;
     btn = {new QPoint(centerX-rx-2, centerY-ry-2), new QPoint(centerX-rx+2, centerY-ry+2)};
     controlBtn.push_back(btn);

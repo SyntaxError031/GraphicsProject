@@ -29,8 +29,8 @@ void Circle::draw() {
     }
 }
 
-void Circle::drawBorder() {
-
+void Circle::generateBorder() {
+    border = {centerX-r, centerY-r, centerX+r, centerY+r};
 }
 
 void Circle::generateControlBtn() {

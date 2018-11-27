@@ -37,18 +37,21 @@ void MainWindow::on_action_line_triggered()
 {
     board->mode = LINE;
     label->setText(" 画线");
+    board->status = READY;
 }
 
 void MainWindow::on_action_circle_triggered()
 {
     board->mode = CIRCLE;
     label->setText(" 画圆");
+    board->status = READY;
 }
 
 void MainWindow::on_action_pencil_triggered()
 {
     board->mode = PENCIL;
     label->setText(" 铅笔");
+    board->status = READY;
 }
 
 void MainWindow::changeLineWidth() {
@@ -66,10 +69,12 @@ void MainWindow::on_action_ellipse_triggered()
 {
     board->mode = ELLIPSE;
     label->setText(" 椭圆");
+    board->status = READY;
 }
 
 void MainWindow::on_action_rectangle_triggered()
 {
     board->mode = RECT;
     label->setText(" 矩形");
+    board->status = READY;
 }

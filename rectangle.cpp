@@ -16,8 +16,8 @@ void Rectangle::draw() {
     }
 }
 
-void Rectangle::drawBorder() {
-
+void Rectangle::generateBorder() {
+    border = {xMin, yMin, xMax, yMax};
 }
 
 void Rectangle::generateControlBtn() {

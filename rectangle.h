@@ -7,7 +7,7 @@ class Rectangle : public SimpleFigure {
 public:
     void draw();
     ~Rectangle() {}
-    void drawBorder();
+    void generateBorder();
     void generateControlBtn();
 
 private:

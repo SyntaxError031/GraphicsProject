@@ -7,7 +7,7 @@ class Circle : public SimpleFigure {
 public:
     ~Circle() {}
     void draw();
-    void drawBorder();
+    void generateBorder();
     void generateControlBtn();
 private:
     int centerX, centerY, r;

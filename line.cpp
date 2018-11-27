@@ -117,7 +117,6 @@ void Line::generateControlBtn() {
         ex = startPoint.x(), ey = startPoint.y();
     }
 
-
     vector<QPoint*> btn; /*
     btn = {new QPoint(sx-3, sy-1), new QPoint(sx-3,sy), new QPoint(sx-3,sy+1), \
            new QPoint(sx-2, sy-1), new QPoint(sx-2,sy), new QPoint(sx-2,sy+1), \

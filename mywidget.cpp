@@ -25,6 +25,7 @@ MyWidget::~MyWidget()
 
 void MyWidget::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
+drawing:
         if(status == READY) {
             if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT) {
                 status = DRAWING;
@@ -58,10 +59,10 @@ void MyWidget::mousePressEvent(QMouseEvent *event) {
                 status = EDITING;
                 // TODO: 进行编辑
             }
-            //else if() {     // 在图形区域内
-            //    status = EDITING;
+            else if(isInBorder(event->pos())) {     // 在图形区域内
+                status = EDITING;
                 // TODO: 进行平移
-            //}
+            }
             else {
                 // TODO: buffer中的内容画定在画布上，清空buffer和辅助线
                 status = READY;
@@ -70,6 +71,8 @@ void MyWidget::mousePressEvent(QMouseEvent *event) {
                 preControlBtn.clear();
                 figure->controlBtn.clear();
                 //TODO: 清空辅助线
+                figure->border.clear();
+                goto drawing;
             }
         }
 
@@ -93,21 +96,38 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
             // TODO: 在编辑
         }
     }
-    if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT) {
-        if(isInControlBtn(event->pos()) != -1) {
-            // TODO: 根据button序号分配不同朝向的图标
-            setCursor(Qt::SizeVerCursor);
+    if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL) {
+        if(status == EDITABLE) {
+            if(isInControlBtn(event->pos()) != -1) {
+                // TODO: 根据button序号分配不同朝向的图标
+                setCursor(Qt::SizeVerCursor);
+            }
+            else if(mode == LINE && isOnLine(event->pos())) {
+                setCursor(Qt::SizeAllCursor);
+            }
+            else if(isInBorder(event->pos())) {     // 在编辑图形区域内
+                // TODO: 变成SizeAllCursor
+                setCursor(Qt::SizeAllCursor);
+            }
+            else
+                setCursor(Qt::CrossCursor);
         }
-//        else if() {     // 在编辑图形区域内
-//            // TODO: 变成SizeAllCursor
-//        }
-        else {
-            setCursor(Qt::CrossCursor);
+        else if(status == READY && figure) {
+            figure->buffer.clear();
+            clearControlBtn();
+            preControlBtn.clear();
+            figure->controlBtn.clear();
+            //TODO: 清空辅助线
+            figure->border.clear();
+            //setCursor(Qt::CrossCursor);
         }
+        setCursor(Qt::CrossCursor);
+
     }
     else {      // 不在图形绘制模式
         setCursor(Qt::ArrowCursor);
     }
+
 }
 
 void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
@@ -117,11 +137,20 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                 rubberBand->hide();
                 rubberBand = NULL;
                 figure->setEndPoint(event->pos());
+                if(figure->getStartPoint() == figure->getEndPoint()) {
+                    status = READY;
+                    return ;
+                }
                 figure->draw();
                 drawBuffer();
                 figure->generateControlBtn();
                 drawControlBtn();
+                figure->generateBorder();
                 status = EDITABLE;
+
+            }
+            else if(mode == PENCIL) {
+                status = READY;
             }
             /*
             if(mode == LINE) {
@@ -281,6 +310,27 @@ int MyWidget::isInControlBtn(QPoint point) {
     }
 
     return -1;       
+}
+
+bool MyWidget::isInBorder(QPoint point) {
+    /* 点是否在图形的外接矩形内
+     * @return true or false
+     */
+    if(figure && !figure->border.empty()) {
+        int xMin = figure->border[0], xMax = figure->border[2];
+        int yMin = figure->border[1], yMax = figure->border[3];
+        if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
+            return true;
+    }
+    return false;
+}
+
+bool MyWidget::isOnLine(QPoint point) {
+    for(int i = 0; i < figure->buffer.size(); i++) {
+        if(abs(point.x()-figure->buffer[i]->x())<=3 && abs(point.y()-figure->buffer[i]->y()) <= 3)
+            return true;
+    }
+    return false;
 }
 
 void MyWidget::paintEvent(QPaintEvent *) {

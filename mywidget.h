@@ -35,9 +35,13 @@ public:
     void drawControlBtn();
     void clearControlBtn();
     int isInControlBtn(QPoint point);
+    bool isInBorder(QPoint point);
+    bool isOnLine(QPoint point);
+
     int mode;
     int lineWidth;
     QColor color;
+    Status status;
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -53,7 +57,6 @@ private:
     vector<QColor> preBuffer;      // 保存编辑状态的点原来的颜色
     QRubberBand *rubberBand;
     vector<vector<QColor>> preControlBtn;    // 存储绘制为控制按钮点以前的颜色
-    Status status;
 };
 
 

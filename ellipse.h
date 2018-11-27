@@ -7,7 +7,7 @@ class Ellipse : public SimpleFigure {
 public:
     void draw();
     ~Ellipse() {}
-    void drawBorder();
+    void generateBorder();
     void generateControlBtn();
 
 private:
