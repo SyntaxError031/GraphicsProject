@@ -53,6 +53,10 @@ drawing:
                 figure = new Line();
                 figure->setStartPoint(event->pos());
             }
+            else if(mode == FILL) {
+                // 填充
+                fill(event->pos());
+            }
         }
         else if(status == EDITABLE) {
             if(isInControlBtn(event->pos()) != -1) {      // 在控制按钮上
@@ -96,7 +100,7 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
             // TODO: 在编辑
         }
     }
-    if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL) {
+    if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL || mode == FILL) {
         if(status == EDITABLE) {
             if(isInControlBtn(event->pos()) != -1) {
                 // TODO: 根据button序号分配不同朝向的图标
@@ -119,9 +123,8 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
             figure->controlBtn.clear();
             //TODO: 清空辅助线
             figure->border.clear();
-            //setCursor(Qt::CrossCursor);
+            setCursor(Qt::CrossCursor);
         }
-        setCursor(Qt::CrossCursor);
 
     }
     else {      // 不在图形绘制模式
@@ -186,6 +189,47 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
             // TODO: 编辑完成
         }
     }
+}
+
+void MyWidget::fill(QPoint seed) {
+    QPainter painter(pix);
+    painter.setPen(QPen(color));
+
+    stack<Point> stk;
+    set<Point> seen;
+    QImage img = pix->toImage();
+    QColor insideColor = img.pixelColor(seed);
+    if(!isInWidget(seed.x(), seed.y()))
+        return ;
+    stk.push(Point(seed.x(), seed.y()));
+    seen.insert(Point(seed.x(), seed.y()));
+    while(!stk.empty()) {
+        Point tmp = stk.top();
+        stk.pop();
+        painter.drawPoint(tmp.x, tmp.y);
+        if(isInWidget(tmp.x-1, tmp.y) && seen.insert(Point(tmp.x-1,tmp.y)).second) {
+            if(img.pixelColor(tmp.x-1, tmp.y) == insideColor)
+                stk.push(Point(tmp.x-1, tmp.y));
+        }
+        if(isInWidget(tmp.x+1, tmp.y) && seen.insert(Point(tmp.x+1,tmp.y)).second) {
+            if(img.pixelColor(tmp.x+1, tmp.y) == insideColor)
+                stk.push(Point(tmp.x+1, tmp.y));
+        }
+        if(isInWidget(tmp.x, tmp.y-1) && seen.insert(Point(tmp.x,tmp.y-1)).second) {
+            if(img.pixelColor(tmp.x, tmp.y-1) == insideColor)
+                stk.push(Point(tmp.x, tmp.y-1));
+        }
+        if(isInWidget(tmp.x, tmp.y+1) && seen.insert(Point(tmp.x,tmp.y+1)).second) {
+            if(img.pixelColor(tmp.x, tmp.y+1) == insideColor)
+                stk.push(Point(tmp.x, tmp.y+1));
+        }
+    }
+    seen.clear();
+    update();
+}
+
+bool MyWidget::isInWidget(int x, int y) {
+    return (x >= 0 && x < 800 && y >= 0 && y < 600);
 }
 
 void MyWidget::drawBuffer() {

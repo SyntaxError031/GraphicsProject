@@ -78,3 +78,10 @@ void MainWindow::on_action_rectangle_triggered()
     label->setText(" 矩形");
     board->status = READY;
 }
+
+void MainWindow::on_action_fill_triggered()
+{
+    board->mode = FILL;
+    label->setText(" 填充");
+    board->status = READY;
+}

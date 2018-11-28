@@ -10,12 +10,25 @@
 #include "ellipse.h"
 #include "rectangle.h"
 #include <QRubberBand>
+#include <stack>
+#include <set>
+
+struct Point {
+    int x, y;
+    Point(int px, int py) { x = px, y = py; }
+    bool operator < (const Point& p) const {
+        if(x == p.x)
+            return (y < p.y);
+        else
+            return (x < p.x);
+    }
+};
 
 namespace Ui {
 class MyWidget;
 }
 
-enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE};
+enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL};
 enum Status {READY, DRAWING, EDITING, EDITABLE};
 
 class MyWidget : public QWidget
@@ -37,6 +50,7 @@ public:
     int isInControlBtn(QPoint point);
     bool isInBorder(QPoint point);
     bool isOnLine(QPoint point);
+    void fill(QPoint seed);
 
     int mode;
     int lineWidth;
@@ -57,6 +71,7 @@ private:
     vector<QColor> preBuffer;      // 保存编辑状态的点原来的颜色
     QRubberBand *rubberBand;
     vector<vector<QColor>> preControlBtn;    // 存储绘制为控制按钮点以前的颜色
+    bool isInWidget(int x, int y);
 };
 
 
