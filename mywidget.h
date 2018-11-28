@@ -29,7 +29,7 @@ class MyWidget;
 }
 
 enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL};
-enum Status {READY, DRAWING, EDITING, EDITABLE};
+enum Status {READY, DRAWING, MOVE, EDITING, EDITABLE};
 
 class MyWidget : public QWidget
 {
@@ -51,6 +51,7 @@ public:
     bool isInBorder(QPoint point);
     bool isOnLine(QPoint point);
     void fill(QPoint seed);
+    void edit(int num);
 
     int mode;
     int lineWidth;
@@ -72,6 +73,7 @@ private:
     QRubberBand *rubberBand;
     vector<vector<QColor>> preControlBtn;    // 存储绘制为控制按钮点以前的颜色
     bool isInWidget(int x, int y);
+    int button;  // 编辑时按了哪个controlBtn
 };
 
 

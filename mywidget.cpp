@@ -16,6 +16,7 @@ MyWidget::MyWidget(QWidget *parent) :
     rubberBand = NULL;
     figure = NULL;
     this->setMouseTracking(true);
+    button = -1;
 }
 
 MyWidget::~MyWidget()
@@ -59,12 +60,22 @@ drawing:
             }
         }
         else if(status == EDITABLE) {
-            if(isInControlBtn(event->pos()) != -1) {      // 在控制按钮上
+            if((button = isInControlBtn(event->pos())) != -1) {      // 在控制按钮上
                 status = EDITING;
                 // TODO: 进行编辑
+                switch (button) {
+                case 0:
+                    figure->setStartPoint(QPoint(figure->border[2], figure->border[3])); break;
+                case 1:
+                    figure->setStartPoint(QPoint(figure->border[2], figure->border[1])); break;
+                case 2:
+                    figure->setStartPoint(QPoint(figure->border[0], figure->border[3])); break;
+                case 3:
+                    figure->setStartPoint(QPoint(figure->border[0], figure->border[1])); break;
+                }
             }
             else if(isInBorder(event->pos())) {     // 在图形区域内
-                status = EDITING;
+                status = MOVE;
                 // TODO: 进行平移
             }
             else {
@@ -98,6 +109,52 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
         }
         else if(status == EDITING) {
             // TODO: 在编辑
+            if(mode == LINE) {
+                if(button == 0) {
+                    figure->setStartPoint(event->pos());
+                }
+                else if(button == 1) {
+                    figure->setEndPoint(event->pos());
+                }
+            }
+            else if(mode == RECT || mode == CIRCLE || mode == ELLIPSE) {
+                if(button == 0) {
+                   // figure->setStartPoint(QPoint(figure->border[2], figure->border[3]));
+                    if(event->pos().x() < figure->getStartPoint().x() && event->pos().y() < figure->getStartPoint().y())
+                        figure->setEndPoint(event->pos());
+                }
+                else if(button == 1) {
+                   // figure->setStartPoint(QPoint(figure->border[2], figure->border[1]));
+                    if(event->pos().x() < figure->getStartPoint().x() && event->pos().y() > figure->getStartPoint().y())
+                        figure->setEndPoint(event->pos());
+                }
+                else if(button == 2) {
+                   // figure->setStartPoint(QPoint(figure->border[0], figure->border[3]));
+                    if(event->pos().x() > figure->getStartPoint().x() && event->pos().y() < figure->getStartPoint().y())
+                        figure->setEndPoint(event->pos());
+                }
+                else if(button == 3) {
+                   // figure->setStartPoint(QPoint(figure->border[0], figure->border[1]));
+                    if(event->pos().x() > figure->getStartPoint().x() && event->pos().y() > figure->getStartPoint().y())
+                        figure->setEndPoint(event->pos());
+                }
+            }
+
+            clearControlBtn();
+            figure->controlBtn.clear();
+            preControlBtn.clear();
+            clearBuffer();
+            figure->buffer.clear();
+            preBuffer.clear();
+            figure->draw();
+            drawBuffer();
+            figure->generateControlBtn();
+            drawControlBtn();
+            figure->generateBorder();
+
+        }
+        else if(status == MOVE) {
+            // TODO: 在平移
         }
     }
     if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL || mode == FILL) {
@@ -116,13 +173,15 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
             else
                 setCursor(Qt::CrossCursor);
         }
-        else if(status == READY && figure) {
-            figure->buffer.clear();
-            clearControlBtn();
-            preControlBtn.clear();
-            figure->controlBtn.clear();
-            //TODO: 清空辅助线
-            figure->border.clear();
+        else if(status == READY) {
+            if(figure) {
+                figure->buffer.clear();
+                clearControlBtn();
+                preControlBtn.clear();
+                figure->controlBtn.clear();
+                //TODO: 清空辅助线
+                figure->border.clear();
+            }
             setCursor(Qt::CrossCursor);
         }
 
@@ -184,11 +243,16 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
             }
             */
         }
-        else if(status == EDITING) {
+        else if(status == EDITING || status == MOVE) {
             status = EDITABLE;
             // TODO: 编辑完成
+
         }
     }
+}
+
+void MyWidget::edit(int num) {
+
 }
 
 void MyWidget::fill(QPoint seed) {
@@ -314,8 +378,6 @@ void MyWidget::clearBuffer() {
     QPainter painter(pix);
     QPen pen;
     /* 将buffer位置的点恢复为原来的颜色 */
-    pen.setColor(Qt::white);
-    painter.setPen(pen);
     for(int i = 0; i < figure->buffer.size(); i++) {
         pen.setColor(preBuffer[i]);
         painter.setPen(pen);

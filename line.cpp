@@ -109,6 +109,7 @@ void Line::generateControlBtn() {
      */
 
     int sx, sy, ex, ey;
+    /*
     if(startPoint.x() < endPoint.x()) {
         sx = startPoint.x(), sy = startPoint.y();
         ex = endPoint.x(), ey = endPoint.y();
@@ -116,6 +117,9 @@ void Line::generateControlBtn() {
         sx = endPoint.x(), sy = endPoint.y();
         ex = startPoint.x(), ey = startPoint.y();
     }
+    */
+    sx = startPoint.x(), sy = startPoint.y();
+    ex = endPoint.x(), ey = endPoint.y();
 
     vector<QPoint*> btn; /*
     btn = {new QPoint(sx-3, sy-1), new QPoint(sx-3,sy), new QPoint(sx-3,sy+1), \

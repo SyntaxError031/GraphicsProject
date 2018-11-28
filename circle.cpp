@@ -35,6 +35,7 @@ void Circle::generateBorder() {
 
 void Circle::generateControlBtn() {
     vector<QPoint*> btn;
+
     btn = {new QPoint(centerX-r-2, centerY-r-2), new QPoint(centerX-r+2, centerY-r+2)};
     controlBtn.push_back(btn);
     btn = {new QPoint(centerX-r-2, centerY+r-2), new QPoint(centerX-r+2, centerY+r+2)};

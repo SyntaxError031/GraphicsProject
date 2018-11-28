@@ -61,7 +61,6 @@ void MainWindow::changeLineWidth() {
 void MainWindow::on_action_color_triggered()
 {
     QColor color = QColorDialog::getColor(Qt::red, this, tr("设置画笔颜色"));
-    qDebug() << color;
     board->color = color;
 }
 

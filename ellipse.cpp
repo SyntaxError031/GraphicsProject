@@ -10,7 +10,7 @@ void Ellipse::draw() {
     centerX = (startPoint.x()+endPoint.x()) / 2;
     centerY = (startPoint.y()+endPoint.y()) / 2;
     int x = 0, y = ry, p = 4*ry*ry-4*rx*rx*ry-rx*rx;
-    while(ry*ry*x <= rx*rx*y) {     // 斜率绝对值小于1
+    while(ry*ry*x < rx*rx*y) {     // 斜率绝对值小于1
         buffer.push_back(new QPoint(x+centerX, y+centerY));
         buffer.push_back(new QPoint(-x+centerX, y+centerY));
         buffer.push_back(new QPoint(-x+centerX, -y+centerY));
