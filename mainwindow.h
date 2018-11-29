@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -7,6 +7,7 @@
 #include "mywidget.h"
 #include <QSpinBox>
 #include <QColorDialog>
+#include <QInputDialog>
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,8 @@ private slots:
     void on_action_fill_triggered();
 
     void on_action_clear_triggered();
+
+    void on_action_rotate_triggered();
 
 private:
     Ui::MainWindow *ui;

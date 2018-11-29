@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <QTextCodec>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
     line_width->setSuffix(" px");
     ui->mainToolBar->addWidget(line_width);
     QObject::connect(line_width, SIGNAL(valueChanged(int)), this, SLOT(changeLineWidth()));
-
 }
 
 MainWindow::~MainWindow()
@@ -89,4 +89,12 @@ void MainWindow::on_action_clear_triggered()
 {
     board->clearAll();
     label->setText(" 就绪");
+}
+
+void MainWindow::on_action_rotate_triggered()
+{
+    bool ok;
+    int value = QInputDialog::getInt(this, tr("旋转角度"), tr("请输顺时针旋转的角度"), 0, 0, 359, 1, &ok);
+    if(ok)
+        board->rotate(value);
 }

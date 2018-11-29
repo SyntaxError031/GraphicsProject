@@ -12,6 +12,7 @@ public:
     virtual void generateControlBtn() = 0;
     virtual void draw() = 0;
     virtual void generateBorder() {}
+    virtual QPoint getCenter() { return QPoint(0, 0); }
     void setStartPoint(QPoint point) { startPoint = point; }
     void setEndPoint(QPoint point) { endPoint = point; }
     vector<QPoint*> buffer;     // 存储处于编辑状态的点

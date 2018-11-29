@@ -158,37 +158,8 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
 
         }
         else if(status == MOVE) {
-            // TODO: 在平移
+            // 在平移
             moveFigure(event->pos());
-            /*
-            if(isInWidget(event->pos().x(), event->pos().y())) {
-                int deltaX = event->pos().x() - moveStart.x();
-                int deltaY = event->pos().y() - moveStart.y();
-                clearControlBtn();
-                figure->controlBtn.clear();
-                preControlBtn.clear();
-                clearBuffer();
-                //figure->buffer.clear();
-                preBuffer.clear();
-                for(int i = 0; i < figure->buffer.size(); i++) {
-                    figure->buffer[i]->setX(figure->buffer[i]->x() + deltaX);
-                    figure->buffer[i]->setY(figure->buffer[i]->y() + deltaY);
-                }
-                figure->setStartPoint(QPoint(figure->getStartPoint().x() + deltaX, figure->getStartPoint().y() + deltaY));
-                figure->setEndPoint(QPoint(figure->getEndPoint().x() + deltaX, figure->getEndPoint().y() + deltaY));
-                //figure->draw();
-                drawBuffer();
-                if(!figure->border.empty()) {
-                    figure->border[0] += deltaX, figure->border[2] += deltaX;
-                    figure->border[1] += deltaY, figure->border[3] += deltaY;
-                }
-                figure->generateControlBtn();
-                drawControlBtn();
-                //figure->generateBorder();
-                moveStart = event->pos();
-
-            }
-            */
         }
     }
     if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL || mode == FILL) {
@@ -314,11 +285,48 @@ void MyWidget::moveFigure(QPoint point) {
     }
 }
 
+void MyWidget::rotate(int value) {
+    if(status == EDITABLE && (mode == RECT || mode == ELLIPSE || mode == LINE)) {        
+        clearControlBtn();
+        figure->controlBtn.clear();
+        preControlBtn.clear();
+
+        if(value != 180) {
+
+            clearBuffer();
+            preBuffer.clear();
+            int centerX = figure->getCenter().x(), centerY = figure->getCenter().y();
+            if(value != 90 && value != 270) {
+                double radian = (double)value*3.14159 / 180.0;
+                for(int i = 0; i < figure->buffer.size(); i++) {
+                    int x = figure->buffer[i]->x(), y = figure->buffer[i]->y();
+                    figure->buffer[i]->setX(centerX+(x-centerX)*cos(radian) - (y-centerY)*sin(radian));
+                    figure->buffer[i]->setY(centerY+(x-centerX)*sin(radian) + (y-centerY)*cos(radian));
+                }
+            }
+            else {
+                for(int i = 0; i < figure->buffer.size(); i++) {
+                    int x = figure->buffer[i]->x(), y = figure->buffer[i]->y();
+                    figure->buffer[i]->setX(centerX - y + centerY);
+                    figure->buffer[i]->setY(centerY + x - centerX);
+                }
+            }
+            drawBuffer();
+        }
+
+        preBuffer.clear();
+        figure->buffer.clear();
+        figure->border.clear();
+        status = READY;
+    }
+}
+
+
 void MyWidget::fill(QPoint seed) {
     QPainter painter(pix);
     painter.setPen(QPen(color));
 
-    stack<Point> stk;
+    queue<Point> stk;
     set<Point> seen;
     QImage img = pix->toImage();
     QColor insideColor = img.pixelColor(seed);
@@ -327,7 +335,7 @@ void MyWidget::fill(QPoint seed) {
     stk.push(Point(seed.x(), seed.y()));
     seen.insert(Point(seed.x(), seed.y()));
     while(!stk.empty()) {
-        Point tmp = stk.top();
+        Point tmp = stk.front();
         stk.pop();
         painter.drawPoint(tmp.x, tmp.y);
         if(isInWidget(tmp.x-1, tmp.y) && seen.insert(Point(tmp.x-1,tmp.y)).second) {
@@ -436,6 +444,7 @@ void MyWidget::clearControlBtn() {
 void MyWidget::clearBuffer() {
     QPainter painter(pix);
     QPen pen;
+    pen.setWidth(lineWidth);
     /* 将buffer位置的点恢复为原来的颜色 */
     for(int i = 0; i < figure->buffer.size(); i++) {
         pen.setColor(preBuffer[i]);

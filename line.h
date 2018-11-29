@@ -9,6 +9,7 @@ public:
     void draw();
     void generateControlBtn();
     void drawBorder();
+    QPoint getCenter();
 };
 
 #endif // LINE_H

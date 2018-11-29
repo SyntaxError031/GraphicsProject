@@ -12,6 +12,7 @@
 #include <QRubberBand>
 #include <stack>
 #include <set>
+#include <queue>
 
 struct Point {
     int x, y;
@@ -53,6 +54,7 @@ public:
     void fill(QPoint seed);
     void clearAll();
     void moveFigure(QPoint point);
+    void rotate(int value);
 
     int mode;
     int lineWidth;

@@ -9,6 +9,7 @@ public:
     ~Rectangle() {}
     void generateBorder();
     void generateControlBtn();
+    QPoint getCenter();
 
 private:
     int xMin, yMin, xMax, yMax;

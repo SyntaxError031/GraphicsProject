@@ -144,3 +144,7 @@ void Line::generateControlBtn() {
     btn = {new QPoint(ex-4, ey-2), new QPoint(ex, ey+2)};
     controlBtn.push_back(btn);
 }
+
+QPoint Line::getCenter() {
+    return QPoint((startPoint.x()+endPoint.x())/2, (startPoint.y()+endPoint.y())/2);
+}

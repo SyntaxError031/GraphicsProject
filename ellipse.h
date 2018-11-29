@@ -9,6 +9,7 @@ public:
     ~Ellipse() {}
     void generateBorder();
     void generateControlBtn();
+    QPoint getCenter();
 
 private:
     int rx, ry, centerX, centerY;
