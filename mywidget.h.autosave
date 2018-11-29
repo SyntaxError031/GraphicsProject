@@ -53,6 +53,8 @@ public:
     void fill(QPoint seed);
     void clearAll();
     void moveFigure(QPoint point);
+    void rotateLeft();
+    void rotateRight();
 
     int mode;
     int lineWidth;

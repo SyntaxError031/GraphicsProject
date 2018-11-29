@@ -9,5 +9,7 @@
         <file>images/pencil_24px_1138713_easyicon.net.png</file>
         <file>images/fill_24px_572863_easyicon.net.png</file>
         <file>images/trash_21.161290322581px_1155533_easyicon.net.png</file>
+        <file>images/transform_rotate_left_32px_1093277_easyicon.net.png</file>
+        <file>images/transform_rotate_right_32px_1093278_easyicon.net.png</file>
     </qresource>
 </RCC>

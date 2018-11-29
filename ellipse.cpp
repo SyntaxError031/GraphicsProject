@@ -48,13 +48,13 @@ void Ellipse::generateControlBtn() {
     if(startPoint == endPoint)
         return ;
     vector<QPoint*> btn;
-    btn = {new QPoint(centerX-rx-2, centerY-ry-2), new QPoint(centerX-rx+2, centerY-ry+2)};
+    btn = {new QPoint(border[0]-2, border[1]-2), new QPoint(border[0]+2, border[1]+2)};
     controlBtn.push_back(btn);
-    btn = {new QPoint(centerX-rx-2, centerY+ry-2), new QPoint(centerX-rx+2, centerY+ry+2)};
+    btn = {new QPoint(border[0]-2, border[3]-2), new QPoint(border[0]+2, border[3]+2)};
     controlBtn.push_back(btn);
-    btn = {new QPoint(centerX+rx-2, centerY-ry-2), new QPoint(centerX+rx+2, centerY-ry+2)};
+    btn = {new QPoint(border[2]-2, border[1]-2), new QPoint(border[2]+2, border[1]+2)};
     controlBtn.push_back(btn);
-    btn = {new QPoint(centerX+rx-2, centerY+ry-2), new QPoint(centerX+rx+2, centerY+ry+2)};
+    btn = {new QPoint(border[2]-2, border[3]-2), new QPoint(border[2]+2, border[3]+2)};
     controlBtn.push_back(btn);
 
 }

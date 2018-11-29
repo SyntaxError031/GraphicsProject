@@ -152,13 +152,15 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
             preBuffer.clear();
             figure->draw();
             drawBuffer();
+            figure->generateBorder();
             figure->generateControlBtn();
             drawControlBtn();
-            figure->generateBorder();
 
         }
         else if(status == MOVE) {
             // TODO: 在平移
+            moveFigure(event->pos());
+            /*
             if(isInWidget(event->pos().x(), event->pos().y())) {
                 int deltaX = event->pos().x() - moveStart.x();
                 int deltaY = event->pos().y() - moveStart.y();
@@ -166,17 +168,27 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 figure->controlBtn.clear();
                 preControlBtn.clear();
                 clearBuffer();
-                figure->buffer.clear();
+                //figure->buffer.clear();
                 preBuffer.clear();
+                for(int i = 0; i < figure->buffer.size(); i++) {
+                    figure->buffer[i]->setX(figure->buffer[i]->x() + deltaX);
+                    figure->buffer[i]->setY(figure->buffer[i]->y() + deltaY);
+                }
                 figure->setStartPoint(QPoint(figure->getStartPoint().x() + deltaX, figure->getStartPoint().y() + deltaY));
                 figure->setEndPoint(QPoint(figure->getEndPoint().x() + deltaX, figure->getEndPoint().y() + deltaY));
-                figure->draw();
+                //figure->draw();
                 drawBuffer();
+                if(!figure->border.empty()) {
+                    figure->border[0] += deltaX, figure->border[2] += deltaX;
+                    figure->border[1] += deltaY, figure->border[3] += deltaY;
+                }
                 figure->generateControlBtn();
                 drawControlBtn();
-                figure->generateBorder();
+                //figure->generateBorder();
                 moveStart = event->pos();
+
             }
+            */
         }
     }
     if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL || mode == FILL) {
@@ -227,9 +239,9 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                 }
                 figure->draw();
                 drawBuffer();
+                figure->generateBorder();
                 figure->generateControlBtn();
                 drawControlBtn();
-                figure->generateBorder();
                 status = EDITABLE;
 
             }
@@ -267,12 +279,40 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
         }
         else if(status == EDITING || status == MOVE) {
             status = EDITABLE;
-            // TODO: 编辑完成
+            // 编辑完成
 
         }
     }
 }
 
+void MyWidget::moveFigure(QPoint point) {
+    if(isInWidget(point.x(), point.y())) {
+        int deltaX = point.x() - moveStart.x();
+        int deltaY = point.y() - moveStart.y();
+        clearControlBtn();
+        figure->controlBtn.clear();
+        preControlBtn.clear();
+        clearBuffer();
+        //figure->buffer.clear();
+        preBuffer.clear();
+        for(int i = 0; i < figure->buffer.size(); i++) {
+            figure->buffer[i]->setX(figure->buffer[i]->x() + deltaX);
+            figure->buffer[i]->setY(figure->buffer[i]->y() + deltaY);
+        }
+        figure->setStartPoint(QPoint(figure->getStartPoint().x() + deltaX, figure->getStartPoint().y() + deltaY));
+        figure->setEndPoint(QPoint(figure->getEndPoint().x() + deltaX, figure->getEndPoint().y() + deltaY));
+        //figure->draw();
+        drawBuffer();
+        if(!figure->border.empty()) {
+            figure->border[0] += deltaX, figure->border[2] += deltaX;
+            figure->border[1] += deltaY, figure->border[3] += deltaY;
+        }
+        figure->generateControlBtn();
+        drawControlBtn();
+        //figure->generateBorder();
+        moveStart = point;
+    }
+}
 
 void MyWidget::fill(QPoint seed) {
     QPainter painter(pix);
