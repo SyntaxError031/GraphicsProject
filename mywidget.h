@@ -74,6 +74,7 @@ private:
     vector<vector<QColor>> preControlBtn;    // 存储绘制为控制按钮点以前的颜色
     bool isInWidget(int x, int y);
     int button;  // 编辑时按了哪个controlBtn
+    QPoint moveStart;
 };
 
 
