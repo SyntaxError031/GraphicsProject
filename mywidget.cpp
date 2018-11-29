@@ -406,6 +406,21 @@ void MyWidget::clearBuffer() {
     update();
 }
 
+void MyWidget::clearAll() {
+    pix->fill(Qt::white);
+    if(figure) {
+        figure->border.clear();
+        figure->buffer.clear();
+        figure->controlBtn.clear();
+        figure->~SimpleFigure();
+    }
+    preBuffer.clear();
+    preControlBtn.clear();
+    mode = NOTHING;
+    status = READY;
+    update();
+}
+
 
 int MyWidget::isInControlBtn(QPoint point) {
     /* 点是否在控制按钮范围内

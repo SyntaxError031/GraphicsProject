@@ -60,6 +60,7 @@
    <addaction name="action_ellipse"/>
    <addaction name="action_color"/>
    <addaction name="action_fill"/>
+   <addaction name="action_clear"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="maximumSize">
@@ -174,6 +175,18 @@
    </property>
    <property name="toolTip">
     <string>填充</string>
+   </property>
+  </action>
+  <action name="action_clear">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/trash_21.161290322581px_1155533_easyicon.net.png</normaloff>:/image/images/trash_21.161290322581px_1155533_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>clear</string>
+   </property>
+   <property name="toolTip">
+    <string>清屏</string>
    </property>
   </action>
  </widget>

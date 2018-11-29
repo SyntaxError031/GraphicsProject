@@ -34,6 +34,8 @@ private slots:
 
     void on_action_fill_triggered();
 
+    void on_action_clear_triggered();
+
 private:
     Ui::MainWindow *ui;
     MyWidget *board;    // MainWindow上绘制图形的部分

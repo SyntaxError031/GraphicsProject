@@ -84,3 +84,9 @@ void MainWindow::on_action_fill_triggered()
     label->setText(" 填充");
     board->status = READY;
 }
+
+void MainWindow::on_action_clear_triggered()
+{
+    board->clearAll();
+    label->setText(" 就绪");
+}

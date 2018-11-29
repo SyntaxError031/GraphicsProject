@@ -51,7 +51,7 @@ public:
     bool isInBorder(QPoint point);
     bool isOnLine(QPoint point);
     void fill(QPoint seed);
-    void edit(int num);
+    void clearAll();
 
     int mode;
     int lineWidth;
