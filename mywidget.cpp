@@ -8,8 +8,8 @@ MyWidget::MyWidget(QWidget *parent) :
     ui(new Ui::MyWidget)
 {
     ui->setupUi(this);
-    pix = new QPixmap(800, 600);
-    pix->fill(Qt::white);
+    pix = QPixmap(800, 600);
+    pix.fill(Qt::white);
     mode = NOTHING;
     status = READY;
     lineWidth = 1;
@@ -17,6 +17,8 @@ MyWidget::MyWidget(QWidget *parent) :
     figure = NULL;
     this->setMouseTracking(true);
     button = -1;
+    tmp = pix;
+    withoutBtn = tmp;
 }
 
 MyWidget::~MyWidget()
@@ -90,11 +92,14 @@ drawing:
                 // TODO: buffer中的内容画定在画布上，清空buffer和辅助线
                 status = READY;
                 figure->buffer.clear();
-                clearControlBtn();
-                preControlBtn.clear();
-                figure->controlBtn.clear();
+                //clearControlBtn();
+                //preControlBtn.clear();
+                //figure->controlBtn.clear();
                 //TODO: 清空辅助线
-                figure->border.clear();
+                //figure->border.clear();
+                tmp = withoutBtn;
+                pix = tmp;
+                update();
                 goto drawing;
             }
         }
@@ -111,6 +116,7 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 figure->setEndPoint(event->pos());
                 figure->draw();
                 drawBuffer();
+                withoutBtn = tmp;
                 figure->buffer.clear();
                 figure->setStartPoint(event->pos());      // 终点变为下一次的起点
             }
@@ -144,14 +150,16 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 }
             }
 
-            clearControlBtn();
+            tmp = pix;
+            //clearControlBtn();
             figure->controlBtn.clear();
-            preControlBtn.clear();
-            clearBuffer();
+            //preControlBtn.clear();
+            //clearBuffer();
             figure->buffer.clear();
-            preBuffer.clear();
+            //preBuffer.clear();
             figure->draw();
             drawBuffer();
+            withoutBtn = tmp;
             figure->generateBorder();
             figure->generateControlBtn();
             drawControlBtn();
@@ -181,11 +189,15 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
         else if(status == READY) {
             if(figure) {
                 figure->buffer.clear();
-                clearControlBtn();
-                preControlBtn.clear();
+                //clearControlBtn();
+                //preControlBtn.clear();
                 figure->controlBtn.clear();
                 //TODO: 清空辅助线
                 figure->border.clear();
+                tmp = withoutBtn;
+                pix = tmp;
+                tmp = pix;
+                update();
             }
             setCursor(Qt::CrossCursor);
         }
@@ -208,8 +220,10 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                     status = READY;
                     return ;
                 }
+                tmp = pix;
                 figure->draw();
                 drawBuffer();
+                withoutBtn = tmp;
                 figure->generateBorder();
                 figure->generateControlBtn();
                 drawControlBtn();
@@ -218,6 +232,8 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
             }
             else if(mode == PENCIL) {
                 status = READY;
+                pix = tmp;
+                withoutBtn = tmp;
             }
             /*
             if(mode == LINE) {
@@ -260,12 +276,12 @@ void MyWidget::moveFigure(QPoint point) {
     if(isInWidget(point.x(), point.y())) {
         int deltaX = point.x() - moveStart.x();
         int deltaY = point.y() - moveStart.y();
-        clearControlBtn();
+        //clearControlBtn();
         figure->controlBtn.clear();
-        preControlBtn.clear();
-        clearBuffer();
+        //preControlBtn.clear();
+        //clearBuffer();
         //figure->buffer.clear();
-        preBuffer.clear();
+        //preBuffer.clear();
         for(int i = 0; i < figure->buffer.size(); i++) {
             figure->buffer[i]->setX(figure->buffer[i]->x() + deltaX);
             figure->buffer[i]->setY(figure->buffer[i]->y() + deltaY);
@@ -273,7 +289,9 @@ void MyWidget::moveFigure(QPoint point) {
         figure->setStartPoint(QPoint(figure->getStartPoint().x() + deltaX, figure->getStartPoint().y() + deltaY));
         figure->setEndPoint(QPoint(figure->getEndPoint().x() + deltaX, figure->getEndPoint().y() + deltaY));
         //figure->draw();
+        tmp = pix;
         drawBuffer();
+        withoutBtn = tmp;
         if(!figure->border.empty()) {
             figure->border[0] += deltaX, figure->border[2] += deltaX;
             figure->border[1] += deltaY, figure->border[3] += deltaY;
@@ -286,15 +304,16 @@ void MyWidget::moveFigure(QPoint point) {
 }
 
 void MyWidget::rotate(int value) {
-    if(status == EDITABLE && (mode == RECT || mode == ELLIPSE || mode == LINE)) {        
-        clearControlBtn();
+    if(status == EDITABLE && (mode == RECT || mode == ELLIPSE || mode == LINE || mode == CIRCLE)) {
+        //clearControlBtn();
         figure->controlBtn.clear();
-        preControlBtn.clear();
+        //preControlBtn.clear();
 
-        if(value != 180) {
+        if(value != 180 && mode != CIRCLE) {
 
-            clearBuffer();
-            preBuffer.clear();
+            //clearBuffer();
+            //preBuffer.clear();
+            tmp = pix;
             int centerX = figure->getCenter().x(), centerY = figure->getCenter().y();
             if(value != 90 && value != 270) {
                 double radian = (double)value*3.14159 / 180.0;
@@ -314,21 +333,52 @@ void MyWidget::rotate(int value) {
             drawBuffer();
         }
 
-        preBuffer.clear();
+        withoutBtn = tmp;
+        //preBuffer.clear();
         figure->buffer.clear();
         figure->border.clear();
         status = READY;
+        pix = tmp;
     }
 }
 
+/*
+void MyWidget::zoomIn() {
+    if(status == EDITABLE && (mode == CIRCLE || mode == ELLIPSE || mode == RECT)) {
+        clearControlBtn();
+        figure->controlBtn.clear();
+        preControlBtn.clear();
+        clearBuffer();
+        preBuffer.clear();
+        int centerX = figure->getCenter().x(), centerY = figure->getCenter().y();
+
+        for(int i = 0; i < figure->buffer.size(); i++) {
+            figure->buffer[i]->setX(figure->buffer[i]->x()*2-centerX);
+            figure->buffer[i]->setY(figure->buffer[i]->y()*2-centerY);
+        }
+        figure->setStartPoint(QPoint(figure->getStartPoint().x()*2-centerX, figure->getStartPoint().y()*2-centerY));
+        figure->setEndPoint(QPoint(figure->getEndPoint().x()*2-centerX, figure->getEndPoint().y()*2-centerY));
+        //figure->draw();
+        ratio *= 2;
+        drawBuffer();
+        if(!figure->border.empty()) {
+            figure->border[0] = figure->border[0]*2-centerX, figure->border[2] = figure->border[2]*2-centerX;
+            figure->border[1] = figure->border[1]*2-centerY, figure->border[3] = figure->border[3]*2-centerY;
+        }
+        figure->generateControlBtn();
+        drawControlBtn();
+        //figure->generateBorder();
+    }
+}
+*/
 
 void MyWidget::fill(QPoint seed) {
-    QPainter painter(pix);
+    QPainter painter(&pix);
     painter.setPen(QPen(color));
 
     queue<Point> stk;
     set<Point> seen;
-    QImage img = pix->toImage();
+    QImage img = pix.toImage();
     QColor insideColor = img.pixelColor(seed);
     if(!isInWidget(seed.x(), seed.y()))
         return ;
@@ -356,6 +406,8 @@ void MyWidget::fill(QPoint seed) {
         }
     }
     seen.clear();
+    tmp = pix;
+    withoutBtn = tmp;
     update();
 }
 
@@ -365,13 +417,15 @@ bool MyWidget::isInWidget(int x, int y) {
 
 void MyWidget::drawBuffer() {
     /* 保存buffer位置原来点的颜色 */
+    /*
     QImage img = pix->toImage();
     preBuffer.resize(figure->buffer.size());
     for(int i = 0; i < figure->buffer.size(); i++) {
         preBuffer[i] = img.pixelColor(*figure->buffer[i]);
     }
+    */
 
-    QPainter painter(pix);
+    QPainter painter(&tmp);
     QPen pen;
     pen.setWidth(lineWidth);
     pen.setColor(color);
@@ -386,6 +440,7 @@ void MyWidget::drawBuffer() {
 
 void MyWidget::drawControlBtn() {
     /* 保存控制按钮原来的颜色 */
+    /*
     QImage img = pix->toImage();
     preControlBtn.resize(figure->controlBtn.size(), vector<QColor>(25));
     for(int i = 0; i < figure->controlBtn.size(); i++) {
@@ -399,6 +454,7 @@ void MyWidget::drawControlBtn() {
                 preControlBtn[i][cnt++] = img.pixelColor(j, k);
         }
     }
+    */
     /*
     QPainter painter(pix);
     QPen pen;
@@ -415,7 +471,7 @@ void MyWidget::drawControlBtn() {
         }
     }
     */
-    QPainter painter(pix);
+    QPainter painter(&tmp);
     painter.setPen(QPen(Qt::black));
     painter.setBrush(QBrush(Qt::white));
     for(int i = 0; i < figure->controlBtn.size(); i++) {
@@ -425,10 +481,11 @@ void MyWidget::drawControlBtn() {
     update();
 }
 
+
 void MyWidget::clearControlBtn() {
-    QPainter painter(pix);
-    QPen pen;
-    /* 将控制按钮恢复为原来的颜色 */
+ //   QPainter painter(pix);
+ //   QPen pen;
+    /* 将控制按钮恢复为原来的颜色
     for(int i = 0; i < preControlBtn.size(); i++) {
         int x = figure->controlBtn[i][0]->x(), y = figure->controlBtn[i][0]->y();
         for(int j = 0; j < preControlBtn[i].size(); j++) {
@@ -438,14 +495,15 @@ void MyWidget::clearControlBtn() {
         }
     }
     update();
+    */
 }
 
 
 void MyWidget::clearBuffer() {
-    QPainter painter(pix);
-    QPen pen;
-    pen.setWidth(lineWidth);
-    /* 将buffer位置的点恢复为原来的颜色 */
+//    QPainter painter(pix);
+//    QPen pen;
+//    pen.setWidth(lineWidth);
+    /* 将buffer位置的点恢复为原来的颜色
     for(int i = 0; i < figure->buffer.size(); i++) {
         pen.setColor(preBuffer[i]);
         painter.setPen(pen);
@@ -453,20 +511,23 @@ void MyWidget::clearBuffer() {
     }
 
     update();
+    */
 }
 
 void MyWidget::clearAll() {
-    pix->fill(Qt::white);
+    pix.fill(Qt::white);
     if(figure) {
         figure->border.clear();
         figure->buffer.clear();
         figure->controlBtn.clear();
         figure->~SimpleFigure();
     }
-    preBuffer.clear();
-    preControlBtn.clear();
+    //preBuffer.clear();
+    //preControlBtn.clear();
     mode = NOTHING;
     status = READY;
+    tmp = pix;
+    withoutBtn = tmp;
     update();
 }
 
@@ -524,7 +585,7 @@ bool MyWidget::isOnLine(QPoint point) {
 
 void MyWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
-    painter.drawPixmap(0, 0, 800, 600, *pix);
+    painter.drawPixmap(0, 0, 800, 600, tmp);
 }
 
 

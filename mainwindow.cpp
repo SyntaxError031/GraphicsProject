@@ -55,7 +55,7 @@ void MainWindow::on_action_pencil_triggered()
 }
 
 void MainWindow::changeLineWidth() {
-    board-> lineWidth = line_width->value();
+    board->lineWidth = line_width->value();
 }
 
 void MainWindow::on_action_color_triggered()
@@ -97,4 +97,9 @@ void MainWindow::on_action_rotate_triggered()
     int value = QInputDialog::getInt(this, tr("旋转角度"), tr("请输顺时针旋转的角度"), 0, 0, 359, 1, &ok);
     if(ok)
         board->rotate(value);
+}
+
+void MainWindow::on_action_zoom_in_triggered()
+{
+    //board->zoomIn();
 }

@@ -61,6 +61,7 @@
    <addaction name="action_color"/>
    <addaction name="action_fill"/>
    <addaction name="action_rotate"/>
+   <addaction name="action_zoom_in"/>
    <addaction name="action_clear"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
@@ -200,6 +201,18 @@
    </property>
    <property name="toolTip">
     <string>旋转</string>
+   </property>
+  </action>
+  <action name="action_zoom_in">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/zoomin_32px_1158358_easyicon.net.png</normaloff>:/image/images/zoomin_32px_1158358_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>zoom_in</string>
+   </property>
+   <property name="toolTip">
+    <string>放大1倍</string>
    </property>
   </action>
  </widget>

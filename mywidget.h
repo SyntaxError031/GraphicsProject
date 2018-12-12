@@ -55,11 +55,13 @@ public:
     void clearAll();
     void moveFigure(QPoint point);
     void rotate(int value);
+    //void zoomIn();
 
     int mode;
     int lineWidth;
     QColor color;
     Status status;
+    //int ratio;
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -69,7 +71,9 @@ protected:
 
 private:
     Ui::MyWidget *ui;
-    QPixmap *pix;
+    QPixmap pix;
+    QPixmap tmp;
+    QPixmap withoutBtn;
     QPoint origin;
     SimpleFigure *figure;
     vector<QColor> preBuffer;      // 保存编辑状态的点原来的颜色

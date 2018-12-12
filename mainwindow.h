@@ -1,4 +1,4 @@
-﻿#ifndef MAINWINDOW_H
+#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -24,7 +24,8 @@ public:
 private slots:
     void on_action_line_triggered();
     void on_action_circle_triggered();
-    void on_action_pencil_triggered();    
+    void on_action_pencil_triggered();
+
     void changeLineWidth();
 
     void on_action_color_triggered();
@@ -38,6 +39,8 @@ private slots:
     void on_action_clear_triggered();
 
     void on_action_rotate_triggered();
+
+    void on_action_zoom_in_triggered();
 
 private:
     Ui::MainWindow *ui;
