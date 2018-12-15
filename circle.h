@@ -9,6 +9,7 @@ public:
     void draw();
     void generateBorder();
     void generateControlBtn();
+    QPoint getCenter();
 private:
     int centerX, centerY, r;
 };

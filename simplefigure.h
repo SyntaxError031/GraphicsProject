@@ -10,7 +10,7 @@ using namespace std;
 class SimpleFigure {
 public:
     virtual void generateControlBtn() = 0;
-    virtual void draw() = 0;
+    virtual void draw() {}
     virtual void generateBorder() {}
     virtual QPoint getCenter() { return QPoint(0, 0); }
     void setStartPoint(QPoint point) { startPoint = point; }

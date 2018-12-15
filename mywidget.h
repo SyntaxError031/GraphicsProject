@@ -9,6 +9,7 @@
 #include "circle.h"
 #include "ellipse.h"
 #include "rectangle.h"
+#include "polygon.h"
 #include <QRubberBand>
 #include <stack>
 #include <set>
@@ -29,7 +30,7 @@ namespace Ui {
 class MyWidget;
 }
 
-enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL};
+enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL, POLYGON};
 enum Status {READY, DRAWING, MOVE, EDITING, EDITABLE};
 
 class MyWidget : public QWidget
@@ -48,14 +49,20 @@ public:
     void clearBuffer();
     void drawControlBtn();
     void clearControlBtn();
+    void drawPolygonControlBtn();
+    void drawPolygon();
     int isInControlBtn(QPoint point);
+    int isInPolygonControlBtn(QPoint point);
     bool isInBorder(QPoint point);
+    bool isInPolygonBorder(QPoint point);
     bool isOnLine(QPoint point);
     void fill(QPoint seed);
     void clearAll();
     void moveFigure(QPoint point);
+    void movePolygon(QPoint point);
     void rotate(int value);
-    //void zoomIn();
+    void zoomIn();
+    void zoomOut();
 
     int mode;
     int lineWidth;
@@ -81,7 +88,9 @@ private:
     vector<vector<QColor>> preControlBtn;    // 存储绘制为控制按钮点以前的颜色
     bool isInWidget(int x, int y);
     int button;  // 编辑时按了哪个controlBtn
+    int polygonBtn;
     QPoint moveStart;
+    Polygon *polygon;
 };
 
 

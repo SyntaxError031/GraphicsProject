@@ -54,7 +54,8 @@ void MainWindow::on_action_pencil_triggered()
     board->status = READY;
 }
 
-void MainWindow::changeLineWidth() {
+void MainWindow::changeLineWidth()
+{
     board->lineWidth = line_width->value();
 }
 
@@ -101,5 +102,17 @@ void MainWindow::on_action_rotate_triggered()
 
 void MainWindow::on_action_zoom_in_triggered()
 {
-    //board->zoomIn();
+    board->zoomIn();
+}
+
+void MainWindow::on_action_zoom_out_triggered()
+{
+    board->zoomOut();
+}
+
+void MainWindow::on_action_polygon_triggered()
+{
+    board->mode = POLYGON;
+    label->setText(" \345\244\232\350\276\271\345\275\242");
+    board->status = READY;
 }

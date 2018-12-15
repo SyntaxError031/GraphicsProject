@@ -42,6 +42,10 @@ private slots:
 
     void on_action_zoom_in_triggered();
 
+    void on_action_zoom_out_triggered();
+
+    void on_action_polygon_triggered();
+
 private:
     Ui::MainWindow *ui;
     MyWidget *board;    // MainWindow上绘制图形的部分

@@ -45,5 +45,8 @@ void Circle::generateControlBtn() {
     btn = {new QPoint(border[2]-2, border[3]-2), new QPoint(border[2]+2, border[3]+2)};
     controlBtn.push_back(btn);
 
+}
 
+QPoint Circle::getCenter() {
+    return QPoint((border[0]+border[2])/2, (border[1]+border[3])/2);
 }

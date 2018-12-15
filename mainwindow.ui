@@ -58,10 +58,12 @@
    <addaction name="action_circle"/>
    <addaction name="action_rectangle"/>
    <addaction name="action_ellipse"/>
+   <addaction name="action_polygon"/>
    <addaction name="action_color"/>
    <addaction name="action_fill"/>
    <addaction name="action_rotate"/>
    <addaction name="action_zoom_in"/>
+   <addaction name="action_zoom_out"/>
    <addaction name="action_clear"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
@@ -213,6 +215,30 @@
    </property>
    <property name="toolTip">
     <string>放大1倍</string>
+   </property>
+  </action>
+  <action name="action_zoom_out">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/Zoom_out_32px_1191724_easyicon.net.png</normaloff>:/image/images/Zoom_out_32px_1191724_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>zoom_out</string>
+   </property>
+   <property name="toolTip">
+    <string>缩小1倍</string>
+   </property>
+  </action>
+  <action name="action_polygon">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/Polygon-595b40b65ba036ed117d2224.svg</normaloff>:/image/images/Polygon-595b40b65ba036ed117d2224.svg</iconset>
+   </property>
+   <property name="text">
+    <string>polygon</string>
+   </property>
+   <property name="toolTip">
+    <string>多边形</string>
    </property>
   </action>
  </widget>
