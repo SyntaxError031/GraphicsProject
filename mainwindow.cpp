@@ -116,3 +116,10 @@ void MainWindow::on_action_polygon_triggered()
     label->setText(" \345\244\232\350\276\271\345\275\242");
     board->status = READY;
 }
+
+void MainWindow::on_action_curve_triggered()
+{
+    board->mode = CURVE;
+    label->setText(" 曲线");
+    board->status = READY;
+}

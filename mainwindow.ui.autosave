@@ -245,7 +245,7 @@
   <action name="action_curve">
    <property name="icon">
     <iconset resource="myimages.qrc">
-     <normaloff>:/image/images/vector_line_curve_64px_1116885_easyicon.net.png</normaloff>:/image/images/vector_line_curve_64px_1116885_easyicon.net.png</iconset>
+     <normaloff>:/image/images/vector_line_curve_32px_1093313_easyicon.net.png</normaloff>:/image/images/vector_line_curve_32px_1093313_easyicon.net.png</iconset>
    </property>
    <property name="text">
     <string>curve</string>

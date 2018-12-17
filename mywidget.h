@@ -10,27 +10,28 @@
 #include "ellipse.h"
 #include "rectangle.h"
 #include "polygon.h"
+#include "curve.h"
 #include <QRubberBand>
 #include <stack>
 #include <set>
 #include <queue>
 
-struct Point {
-    int x, y;
-    Point(int px, int py) { x = px, y = py; }
-    bool operator < (const Point& p) const {
-        if(x == p.x)
-            return (y < p.y);
-        else
-            return (x < p.x);
-    }
-};
+//struct Point {
+//    int x, y;
+//    Point(int px, int py) { x = px, y = py; }
+//    bool operator < (const Point& p) const {
+//        if(x == p.x)
+//            return (y < p.y);
+//        else
+//            return (x < p.x);
+//    }
+//};
 
 namespace Ui {
 class MyWidget;
 }
 
-enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL, POLYGON};
+enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL, POLYGON, CURVE};
 enum Status {READY, DRAWING, MOVE, EDITING, EDITABLE};
 
 class MyWidget : public QWidget
@@ -51,6 +52,8 @@ public:
     void clearControlBtn();
     void drawPolygonControlBtn();
     void drawPolygon();
+    void drawCurve();
+    void drawCurveControlBtn();
     int isInControlBtn(QPoint point);
     int isInPolygonControlBtn(QPoint point);
     bool isInBorder(QPoint point);
@@ -91,6 +94,7 @@ private:
     int polygonBtn;
     QPoint moveStart;
     Polygon *polygon;
+    Curve *curve;
 };
 
 

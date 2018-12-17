@@ -1,7 +1,9 @@
 #ifndef POLYGON_H
 #define POLYGON_H
 
-#include "simplefigure.h"
+#include <QPoint>
+#include <vector>
+using namespace std;
 
 class Polygon {
 public:

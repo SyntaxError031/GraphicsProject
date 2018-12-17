@@ -16,6 +16,7 @@ MyWidget::MyWidget(QWidget *parent) :
     rubberBand = NULL;
     figure = NULL;
     polygon = NULL;
+    curve = NULL;
     this->setMouseTracking(true);
     button = -1;
     polygonBtn = -1;
@@ -78,6 +79,20 @@ drawing:
                 }
                 else {
 
+                }
+            }
+            else if(mode == CURVE) {
+                status = DRAWING;
+                if(!curve) {    // 还没有曲线，画第一条边
+                    curve = new Curve();
+                    curve->isFirst = true;
+                    curve->controlPoints.push_back(event->pos());
+                    origin = event->pos();
+                    if(!rubberBand) {
+                        rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+                        rubberBand->setGeometry(QRect(origin, QSize()));
+                        rubberBand->show();
+                    }
                 }
             }
         }
@@ -160,6 +175,11 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
             }
             else if(mode == POLYGON) {
                 if(polygon->isFirst) {  // 第一条线
+                    rubberBand->setGeometry(QRect(origin, event->pos()).normalized());
+                }
+            }
+            else if(mode == CURVE) {
+                if(curve->isFirst) {    // 第一条线
                     rubberBand->setGeometry(QRect(origin, event->pos()).normalized());
                 }
             }
@@ -343,6 +363,41 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                 else {
                     polygon->points.clear();
                     polygon = NULL;
+                    status = READY;
+                }
+            }
+            else if(mode == CURVE) {
+                tmp = pix;
+                if(curve->isFirst && event->pos() != curve->controlPoints[0]) {  // 画第一条线结束
+                    curve->isFirst = false;
+                    rubberBand->hide();
+                    rubberBand = NULL;
+                    curve->controlPoints.push_back(event->pos());
+                    drawCurve();
+                }
+                else if(event->pos() != curve->controlPoints[0]) {  // 不是第一条线且没画完
+                    curve->cnt++;
+                    if(curve->cnt < 2) {
+                        curve->isFirst = false;
+                        curve->controlPoints.insert(curve->controlPoints.end()-1, event->pos());
+                        curve->draw();
+                        drawCurve();
+                    }
+                    else if(curve->cnt == 2) {
+                        curve->controlPoints.insert(curve->controlPoints.end()-1, event->pos());
+                        curve->brezierPoints.clear();
+                        curve->draw();
+                        drawCurve();
+                        // TODO: 画出控制点
+                        withoutBtn = tmp;
+                        drawCurveControlBtn();
+                        status = EDITABLE;
+                    }
+
+                }
+                else {
+                    curve->controlPoints.clear();
+                    curve = NULL;
                     status = READY;
                 }
             }
@@ -623,6 +678,26 @@ void MyWidget::drawPolygon() {
     update();
 }
 
+void MyWidget::drawCurve() {
+    QPainter painter(&tmp);
+    QPen pen;
+    pen.setWidth(lineWidth);
+    pen.setColor(color);
+    painter.setPen(pen);
+
+    if(curve->controlPoints.size() == 2) {
+        painter.drawLine(curve->controlPoints[0], curve->controlPoints[1]);
+    }
+    else {
+        for(int i = 1; i < curve->brezierPoints.size(); i++) {
+            QPoint p1(curve->brezierPoints[i].x, curve->brezierPoints[i].y);
+            QPoint p2(curve->brezierPoints[i-1].x, curve->brezierPoints[i-1].y);
+            painter.drawLine(p1, p2);
+        }
+    }
+    update();
+}
+
 void MyWidget::drawControlBtn() {
     /* 保存控制按钮原来的颜色 */
     /*
@@ -672,6 +747,17 @@ void MyWidget::drawPolygonControlBtn() {
     painter.setBrush(QBrush(Qt::white));
     for(int i = 0; i < polygon->controlBtn.size(); i++) {
         int x = polygon->controlBtn[i][0]->x(), y = polygon->controlBtn[i][0]->y();
+        painter.drawRect(x, y, 4, 4);
+    }
+    update();
+}
+
+void MyWidget::drawCurveControlBtn() {
+    QPainter painter(&tmp);
+    painter.setPen(QPen(Qt::black));
+    painter.setBrush(QBrush(Qt::white));
+    for(int i = 0; i < curve->controlPoints.size(); i++) {
+        int x = curve->controlPoints[i].x() - 2, y = curve->controlPoints[i].y() - 2;
         painter.drawRect(x, y, 4, 4);
     }
     update();
