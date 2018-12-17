@@ -63,6 +63,7 @@ public:
     void clearAll();
     void moveFigure(QPoint point);
     void movePolygon(QPoint point);
+    void moveCurve(QPoint point);
     void rotate(int value);
     void zoomIn();
     void zoomOut();

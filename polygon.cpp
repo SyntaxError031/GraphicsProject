@@ -1,5 +1,11 @@
 #include "polygon.h"
 
+Polygon::~Polygon() {
+    controlBtn.clear();
+    points.clear();
+    border.clear();
+}
+
 void Polygon::generateControlBtn() {
     vector<QPoint*> btn;
     for(int i = 0; i < points.size(); i++) {

@@ -44,3 +44,7 @@ void Curve::draw() {
         brezierPoints.push_back(Point(x, y));
     }
 }
+
+QPoint Curve::getCenter() {
+    return QPoint((border[0]+border[2])/2, (border[1]+border[3])/2);
+}

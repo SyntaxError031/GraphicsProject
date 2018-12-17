@@ -25,6 +25,7 @@ public:
     vector<Point> brezierPoints;    // 计算出的brezier点
     vector<int> border;     // 边界
     int cnt;
+    QPoint getCenter();
 };
 
 #endif // CURVE_H

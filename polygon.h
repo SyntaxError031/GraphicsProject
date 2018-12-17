@@ -7,6 +7,7 @@ using namespace std;
 
 class Polygon {
 public:
+    ~Polygon();
     bool isFirst;   // 是否为第一条线
     bool isEnd;     // 是否为最后一条线
     vector<QPoint> points;  // 多边形每个顶点

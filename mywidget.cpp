@@ -98,7 +98,8 @@ drawing:
         }
         else if(status == EDITABLE) {
 
-            if(mode != POLYGON && (button = isInControlBtn(event->pos())) != -1) {      // 在控制按钮上
+            //if(mode != POLYGON && (button = isInControlBtn(event->pos())) != -1) {      // 在控制按钮上
+            if((button = isInControlBtn(event->pos())) != -1) {
                 status = EDITING;
                 // 进行编辑
                 if(mode == CIRCLE || mode == ELLIPSE || mode == RECT) {
@@ -113,8 +114,10 @@ drawing:
                         figure->setStartPoint(QPoint(figure->border[0], figure->border[1])); break;
                     }
                 }
+
             }
-            else if(mode != POLYGON && isInBorder(event->pos())) {     // 在图形区域内
+            else if(isInBorder(event->pos())) {
+            //else if(mode != POLYGON && isInBorder(event->pos())) {     // 在图形区域内
                 status = MOVE;
                 // TODO: 进行平移
                 moveStart = event->pos();
@@ -124,28 +127,35 @@ drawing:
                 status = MOVE;
                 moveStart = event->pos();
             }
-            else if(mode == POLYGON && (polygonBtn = isInPolygonControlBtn(event->pos())) != -1) {
-                status = EDITING;
+            //else if(mode == POLYGON && (polygonBtn = isInPolygonControlBtn(event->pos())) != -1) {
+              //  status = EDITING;
                 // 进行编辑
-            }
-            else if(mode == POLYGON && isInPolygonBorder(event->pos())) {
-                status = MOVE;
+            //}
+            //else if(mode == POLYGON && isInPolygonBorder(event->pos())) {
+              //  status = MOVE;
                 // 进行平移
-                moveStart = event->pos();
-            }
+                //moveStart = event->pos();
+           // }
             else {
                 // TODO: buffer中的内容画定在画布上，清空buffer和辅助线
                 status = READY;
                 if(mode == POLYGON) {
-                    polygon->controlBtn.clear();
-                    polygon->border.clear();
+                    //polygon->controlBtn.clear();
+                    //polygon->border.clear();
+                    polygon->~Polygon();
                     polygon = NULL;
                 }
+                else if(mode == CURVE) {
+                    curve->~Curve();
+                    curve = NULL;
+                }
                 else {
-                    figure->buffer.clear();
+                 //   figure->buffer.clear();
                 //clearControlBtn();
                 //preControlBtn.clear();
-                    figure->controlBtn.clear();
+                   // figure->controlBtn.clear();
+                    figure->~SimpleFigure();
+                    figure = NULL;
                 }
                 //TODO: 清空辅助线
                 //figure->border.clear();
@@ -213,17 +223,27 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 }
             }
             else if(mode == POLYGON) {
-                polygon->points[polygonBtn] = event->pos();
+                polygon->points[button] = event->pos();
                 tmp = pix;
                 drawPolygon();
                 withoutBtn = tmp;
                 polygon->controlBtn.clear();
                 polygon->generateControlBtn();
-                drawPolygonControlBtn();
+                drawControlBtn();
                 polygon->generateBorder();
             }
+            else if(mode == CURVE) {
+                curve->controlPoints[button] = event->pos();
+                tmp = pix;
+                // 重画
+                curve->brezierPoints.clear();
+                curve->draw();
+                drawCurve();
+                withoutBtn = tmp;
+                drawControlBtn();
+            }
 
-            if(mode != POLYGON) {
+            if(mode != POLYGON && mode != CURVE) {
                 tmp = pix;
                 figure->controlBtn.clear();
                 //preControlBtn.clear();
@@ -241,23 +261,25 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
         }
         else if(status == MOVE) {
             // 在平移
-            if(mode != POLYGON)
+            if(mode != POLYGON && mode != CURVE)
                 moveFigure(event->pos());
-            else
+            else if(mode == POLYGON)
                 movePolygon(event->pos());
+            else
+                moveCurve(event->pos());
         }
     }
-    if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL || mode == FILL || mode == POLYGON) {
+    if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL || mode == FILL || mode == POLYGON || mode == CURVE) {
         if(status == EDITABLE) {
-            if(mode == POLYGON) {
-                if(isInPolygonControlBtn(event->pos()) != -1)
-                    setCursor(Qt::SizeVerCursor);
-                else if(isInPolygonBorder(event->pos()))
-                    setCursor(Qt::SizeAllCursor);
-                else
-                    setCursor(Qt::CrossCursor);
-            }
-            else {
+//            if(mode == POLYGON) {
+//                if(isInPolygonControlBtn(event->pos()) != -1)
+//                    setCursor(Qt::SizeVerCursor);
+//                else if(isInPolygonBorder(event->pos()))
+//                    setCursor(Qt::SizeAllCursor);
+//                else
+//                    setCursor(Qt::CrossCursor);
+//            }
+ //           else {
                 if(isInControlBtn(event->pos()) != -1) {
                     // TODO: 根据button序号分配不同朝向的图标
                     setCursor(Qt::SizeVerCursor);
@@ -271,16 +293,18 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 }
                 else
                     setCursor(Qt::CrossCursor);
-            }
+//            }
         }
         else if(status == READY) {
             if(figure) {
-                figure->buffer.clear();
+                //figure->buffer.clear();
                 //clearControlBtn();
                 //preControlBtn.clear();
-                figure->controlBtn.clear();
+                //figure->controlBtn.clear();
                 //TODO: 清空辅助线
-                figure->border.clear();
+                //figure->border.clear();
+                figure->~SimpleFigure();
+                figure = NULL;
                 tmp = withoutBtn;
                 pix = tmp;
                 tmp = pix;
@@ -290,13 +314,17 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 polygon->isEnd = true;
                 tmp = pix;
                 drawPolygon();
-                polygon->border.clear();
-                polygon->points.clear();
+                //polygon->border.clear();
+                //polygon->points.clear();
+                polygon->~Polygon();
                 polygon = NULL;
                 pix = tmp;
                 withoutBtn = tmp;
                 tmp = pix;
                 update();
+            }
+            else if(curve) {
+
             }
             setCursor(Qt::CrossCursor);
         }
@@ -352,7 +380,7 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                         // TODO: 画出控制点
                         polygon->generateControlBtn();
                         polygon->generateBorder();
-                        drawPolygonControlBtn();
+                        drawControlBtn();
                         status = EDITABLE;
                     }
                     else {
@@ -390,7 +418,7 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
                         drawCurve();
                         // TODO: 画出控制点
                         withoutBtn = tmp;
-                        drawCurveControlBtn();
+                        drawControlBtn();
                         status = EDITABLE;
                     }
 
@@ -455,8 +483,28 @@ void MyWidget::movePolygon(QPoint point) {
         withoutBtn = tmp;
         polygon->controlBtn.clear();
         polygon->generateControlBtn();
-        drawPolygonControlBtn();
+        drawControlBtn();
         polygon->generateBorder();
+        moveStart = point;
+    }
+}
+
+void MyWidget::moveCurve(QPoint point) {
+    if(isInWidget(point.x(), point.y())) {
+        int deltaX = point.x() - moveStart.x();
+        int deltaY = point.y() - moveStart.y();
+
+        for(int i = 0; i < curve->controlPoints.size(); i++) {
+            curve->controlPoints[i].setX(curve->controlPoints[i].x() + deltaX);
+            curve->controlPoints[i].setY(curve->controlPoints[i].y() + deltaY);
+        }
+
+        tmp = pix;
+        curve->brezierPoints.clear();
+        curve->draw();
+        drawCurve();
+        withoutBtn = tmp;
+        drawControlBtn();
         moveStart = point;
     }
 }
@@ -493,8 +541,10 @@ void MyWidget::rotate(int value) {
 
         withoutBtn = tmp;
         //preBuffer.clear();
-        figure->buffer.clear();
-        figure->border.clear();
+        //figure->buffer.clear();
+        //figure->border.clear();
+        figure->~SimpleFigure();
+        figure = NULL;
         status = READY;
         pix = tmp;
     }
@@ -511,8 +561,29 @@ void MyWidget::rotate(int value) {
 
         drawPolygon();
         withoutBtn = tmp;
-        polygon->points.clear();
+        //polygon->points.clear();
+        polygon->~Polygon();
         polygon = NULL;
+        status = READY;
+        pix = tmp;
+    }
+    if(status == EDITABLE && mode == CURVE) {
+        curve->brezierPoints.clear();
+        tmp = pix;
+        int centerX = curve->getCenter().x(), centerY = curve->getCenter().y();
+        double radian = (double)value*3.14159 / 180.0;
+        for(int i = 0; i < curve->controlPoints.size(); i++) {
+            int x = curve->controlPoints[i].x(), y = curve->controlPoints[i].y();
+            curve->controlPoints[i].setX(centerX+(x-centerX)*cos(radian) - (y-centerY)*sin(radian));
+            curve->controlPoints[i].setY(centerY+(x-centerX)*sin(radian) + (y-centerY)*cos(radian));
+        }
+
+        curve->draw();
+        drawCurve();
+        withoutBtn = tmp;
+
+        curve->~Curve();
+        curve = NULL;
         status = READY;
         pix = tmp;
     }
@@ -548,7 +619,7 @@ void MyWidget::zoomIn() {
         drawPolygon();
         withoutBtn = tmp;
         polygon->generateControlBtn();
-        drawPolygonControlBtn();
+        drawControlBtn();
         polygon->generateBorder();
         status = EDITABLE;
     }
@@ -590,7 +661,7 @@ void MyWidget::zoomOut() {
         drawPolygon();
         withoutBtn = tmp;
         polygon->generateControlBtn();
-        drawPolygonControlBtn();
+        drawControlBtn();
         polygon->generateBorder();
         status = EDITABLE;
     }
@@ -734,14 +805,29 @@ void MyWidget::drawControlBtn() {
     QPainter painter(&tmp);
     painter.setPen(QPen(Qt::black));
     painter.setBrush(QBrush(Qt::white));
-    for(int i = 0; i < figure->controlBtn.size(); i++) {
-        int x = figure->controlBtn[i][0]->x(), y = figure->controlBtn[i][0]->y();
-        painter.drawRect(x, y, 4, 4);
+    if(figure) {
+        for(int i = 0; i < figure->controlBtn.size(); i++) {
+            int x = figure->controlBtn[i][0]->x(), y = figure->controlBtn[i][0]->y();
+            painter.drawRect(x, y, 4, 4);
+        }
+    }
+    else if(polygon) {
+        for(int i = 0; i < polygon->controlBtn.size(); i++) {
+            int x = polygon->controlBtn[i][0]->x(), y = polygon->controlBtn[i][0]->y();
+            painter.drawRect(x, y, 4, 4);
+        }
+    }
+    else if(curve) {
+        for(int i = 0; i < curve->controlPoints.size(); i++) {
+            int x = curve->controlPoints[i].x() - 2, y = curve->controlPoints[i].y() - 2;
+            painter.drawRect(x, y, 4, 4);
+        }
     }
     update();
 }
 
 void MyWidget::drawPolygonControlBtn() {
+    /*
     QPainter painter(&tmp);
     painter.setPen(QPen(Qt::black));
     painter.setBrush(QBrush(Qt::white));
@@ -750,9 +836,11 @@ void MyWidget::drawPolygonControlBtn() {
         painter.drawRect(x, y, 4, 4);
     }
     update();
+    */
 }
 
 void MyWidget::drawCurveControlBtn() {
+    /*
     QPainter painter(&tmp);
     painter.setPen(QPen(Qt::black));
     painter.setBrush(QBrush(Qt::white));
@@ -761,6 +849,7 @@ void MyWidget::drawCurveControlBtn() {
         painter.drawRect(x, y, 4, 4);
     }
     update();
+    */
 }
 
 void MyWidget::clearControlBtn() {
@@ -817,6 +906,7 @@ int MyWidget::isInControlBtn(QPoint point) {
     /* 点是否在控制按钮范围内
      * @return 控制按钮的序号，如果不在，返回-1
      */
+    int i;
     if(figure) {
     /*
         int i;
@@ -829,7 +919,7 @@ int MyWidget::isInControlBtn(QPoint point) {
         if(i == figure->controlBtn.size())
             return -1;
     */
-        int i;
+        //int i;
         for(i = 0; i < figure->controlBtn.size(); i++) {
             int xMin = figure->controlBtn[i][0]->x(), xMax = figure->controlBtn[i][1]->x();
             int yMin = figure->controlBtn[i][0]->y(), yMax = figure->controlBtn[i][1]->y();
@@ -839,11 +929,33 @@ int MyWidget::isInControlBtn(QPoint point) {
         if(i == figure->controlBtn.size())
             return -1;
     }
+    else if(polygon) {
+        //int i;
+        for(i = 0; i < polygon->controlBtn.size(); i++) {
+            int xMin = polygon->controlBtn[i][0]->x(), xMax = polygon->controlBtn[i][1]->x();
+            int yMin = polygon->controlBtn[i][0]->y(), yMax = polygon->controlBtn[i][1]->y();
+            if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
+                return i;
+        }
+        if(i == polygon->controlBtn.size())
+            return -1;
+    }
+    else if(curve) {
+        for(int i = 0; i < curve->controlPoints.size(); i++) {
+            int xMin = curve->controlPoints[i].x() - 2, xMax = curve->controlPoints[i].x() + 2;
+            int yMin = curve->controlPoints[i].y() - 2, yMax = curve->controlPoints[i].y() + 2;
+            if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
+                return i;
+        }
+        if(i == curve->controlPoints.size())
+            return -1;
+    }
 
     return -1;       
 }
 
 int MyWidget::isInPolygonControlBtn(QPoint point) {
+    /*
     if(polygon) {
         int i;
         for(i = 0; i < polygon->controlBtn.size(); i++) {
@@ -855,6 +967,8 @@ int MyWidget::isInPolygonControlBtn(QPoint point) {
         if(i == polygon->controlBtn.size())
             return -1;
     }
+    return -1;
+    */
     return -1;
 }
 
@@ -868,16 +982,31 @@ bool MyWidget::isInBorder(QPoint point) {
         if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
             return true;
     }
-    return false;
-}
-
-bool MyWidget::isInPolygonBorder(QPoint point) {
     if(polygon && !polygon->border.empty()) {
         int xMin = polygon->border[0], xMax = polygon->border[2];
         int yMin = polygon->border[1], yMax = polygon->border[3];
         if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
             return true;
     }
+    if(curve && !curve->border.empty()) {
+        int xMin = curve->border[0], xMax = curve->border[2];
+        int yMin = curve->border[1], yMax = curve->border[3];
+        if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
+            return true;
+    }
+    return false;
+}
+
+bool MyWidget::isInPolygonBorder(QPoint point) {
+    /*
+    if(polygon && !polygon->border.empty()) {
+        int xMin = polygon->border[0], xMax = polygon->border[2];
+        int yMin = polygon->border[1], yMax = polygon->border[3];
+        if(point.x() >= xMin && point.x() <= xMax && point.y() >= yMin && point.y() <= yMax)
+            return true;
+    }
+    return false;
+    */
     return false;
 }
 

@@ -18,7 +18,11 @@ public:
     vector<QPoint*> buffer;     // 存储处于编辑状态的点
     vector<vector<QPoint*>> controlBtn;     // 存储表示控制按钮的点
     vector<int> border;     // 存储边界的4个值
-    virtual ~SimpleFigure() {}
+    virtual ~SimpleFigure() {
+        buffer.clear();
+        controlBtn.clear();
+        border.clear();
+    }
     QPoint getStartPoint() { return startPoint; }
     QPoint getEndPoint() { return endPoint; }
 protected:
