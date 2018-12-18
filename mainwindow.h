@@ -48,6 +48,10 @@ private slots:
 
     void on_action_curve_triggered();
 
+    void on_action_undo_triggered();
+
+    void on_action_redo_triggered();
+
 private:
     Ui::MainWindow *ui;
     MyWidget *board;    // MainWindow上绘制图形的部分

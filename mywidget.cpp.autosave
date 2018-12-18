@@ -1028,6 +1028,7 @@ void MyWidget::clearAll() {
     status = READY;
     tmp = pix;
     withoutBtn = tmp;
+    pushPix(pix);
     update();
 }
 

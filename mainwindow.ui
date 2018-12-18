@@ -65,6 +65,8 @@
    <addaction name="action_rotate"/>
    <addaction name="action_zoom_in"/>
    <addaction name="action_zoom_out"/>
+   <addaction name="action_undo"/>
+   <addaction name="action_redo"/>
    <addaction name="action_clear"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
@@ -252,6 +254,30 @@
    </property>
    <property name="toolTip">
     <string>曲线</string>
+   </property>
+  </action>
+  <action name="action_undo">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/undo_54.692307692308px_1158297_easyicon.net.png</normaloff>:/image/images/undo_54.692307692308px_1158297_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>undo</string>
+   </property>
+   <property name="toolTip">
+    <string>撤销</string>
+   </property>
+  </action>
+  <action name="action_redo">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/redo_54.692307692308px_1158145_easyicon.net.png</normaloff>:/image/images/redo_54.692307692308px_1158145_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>redo</string>
+   </property>
+   <property name="toolTip">
+    <string>重做</string>
    </property>
   </action>
  </widget>

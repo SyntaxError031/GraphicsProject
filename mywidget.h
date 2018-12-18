@@ -67,6 +67,10 @@ public:
     void rotate(int value);
     void zoomIn();
     void zoomOut();
+    void changeColor(QColor color);
+    void changeWidth(int width);
+    void undo();
+    void redo();
 
     int mode;
     int lineWidth;
@@ -96,6 +100,9 @@ private:
     QPoint moveStart;
     Polygon *polygon;
     Curve *curve;
+    vector<QPixmap> pixmaps;     // 保存画布、
+    int currentPix;     // 当前的画布
+    void pushPix(QPixmap pixmap);
 };
 
 

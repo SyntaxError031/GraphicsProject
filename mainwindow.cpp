@@ -56,13 +56,15 @@ void MainWindow::on_action_pencil_triggered()
 
 void MainWindow::changeLineWidth()
 {
-    board->lineWidth = line_width->value();
+    //board->lineWidth = line_width->value();
+    board->changeWidth(line_width->value());
 }
 
 void MainWindow::on_action_color_triggered()
 {
     QColor color = QColorDialog::getColor(Qt::red, this, tr("设置画笔颜色"));
-    board->color = color;
+    //board->color = color;
+    board->changeColor(color);
 }
 
 void MainWindow::on_action_ellipse_triggered()
@@ -122,4 +124,14 @@ void MainWindow::on_action_curve_triggered()
     board->mode = CURVE;
     label->setText(" 曲线");
     board->status = READY;
+}
+
+void MainWindow::on_action_undo_triggered()
+{
+    board->undo();
+}
+
+void MainWindow::on_action_redo_triggered()
+{
+    board->redo();
 }
