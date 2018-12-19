@@ -32,7 +32,7 @@ class MyWidget;
 }
 
 enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL, POLYGON, CURVE};
-enum Status {READY, DRAWING, MOVE, EDITING, EDITABLE};
+enum Status {READY, DRAWING, MOVE, EDITING, EDITABLE, CUT, CUT_READY, CUT_DRAWING, CUT_EDITABLE, CUT_MOVE, CUT_EDITING};
 
 class MyWidget : public QWidget
 {
@@ -71,6 +71,7 @@ public:
     void changeWidth(int width);
     void undo();
     void redo();
+    void cutLine();
 
     int mode;
     int lineWidth;
@@ -103,6 +104,12 @@ private:
     vector<QPixmap> pixmaps;     // 保存画布、
     int currentPix;     // 当前的画布
     void pushPix(QPixmap pixmap);
+    QRect cutArea;
+    QPoint cutStart;
+    QPoint cutEnd;
+    void drawCutArea();
+    int isInCutBtn(QPoint point);
+    bool isInCutArea(QPoint point);
 };
 
 

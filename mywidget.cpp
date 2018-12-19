@@ -169,7 +169,47 @@ drawing:
             }
         }
     }
+    else if(event->button() == Qt::RightButton) {
+        if(mode == LINE && status == EDITABLE) {    // 进入裁剪状态
+            status = CUT;
+            cutStart = event->pos();
+            origin = event->pos();
+            tmp = withoutBtn;   // 清除控制按钮
+            if(!rubberBand) {
+                rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+                rubberBand->setGeometry(QRect(origin, QSize()));
+                rubberBand->show();
+            }
+        }
+        else if(status == CUT) {
+            if((button = isInCutBtn(event->pos())) != -1) {  // 在裁剪区域控制按钮上
+                status = CUT_EDITING;
+                switch (button) {
+                case 0:
+                    cutStart = cutArea.bottomRight(); break;
+                case 1:
+                    cutStart = cutArea.topRight(); break;
+                case 2:
+                    cutStart = cutArea.bottomLeft(); break;
+                case 3:
+                    cutStart = cutArea.topLeft(); break;
+                default:
+                    break;
+                }
+            }
+            else if(isInCutArea(event->pos())) {     // 在裁剪区域内
+                status = CUT_MOVE;
+                moveStart = event->pos();
+            }
+            else { // 不在裁剪区域内
+                // 确认裁剪
+                // TODO: cut, 重画, 画出控制点
+                cutLine();
+                status = EDITABLE;
+            }
 
+        }
+    }
 
 }
 
@@ -272,6 +312,26 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 moveCurve(event->pos());
         }
     }
+    else if(event->buttons() & Qt::RightButton) {
+        if(status == CUT) {
+            rubberBand->setGeometry(QRect(origin, event->pos()).normalized());
+        }
+        else if(status == CUT_EDITING) {
+            tmp = withoutBtn;
+            cutEnd = event->pos();
+            drawCutArea();
+        }
+        else if(status == CUT_MOVE) {
+            tmp = withoutBtn;
+            int deltaX = event->pos().x() - moveStart.x(), deltaY = event->pos().y() - moveStart.y();
+            cutStart.setX(cutStart.x() + deltaX);
+            cutStart.setY(cutStart.y() + deltaY);
+            cutEnd.setX(cutEnd.x() + deltaX);
+            cutEnd.setY(cutEnd.y() + deltaY);
+            drawCutArea();
+            moveStart = event->pos();
+        }
+    }
     if(mode == LINE || mode == CIRCLE || mode == ELLIPSE || mode == RECT || mode == PENCIL || mode == FILL || mode == POLYGON || mode == CURVE) {
         if(status == EDITABLE) {
 //            if(mode == POLYGON) {
@@ -338,6 +398,14 @@ void MyWidget::mouseMoveEvent(QMouseEvent *event) {
                 pushPix(pix);
             }
             setCursor(Qt::CrossCursor);
+        }
+        else if(status == CUT) {
+            if(isInCutBtn(event->pos()) != -1)
+                setCursor(Qt::SizeVerCursor);
+            else if(isInCutArea(event->pos()))
+                setCursor(Qt::SizeAllCursor);
+            else
+                setCursor(Qt::CrossCursor);
         }
 
     }
@@ -450,6 +518,71 @@ void MyWidget::mouseReleaseEvent(QMouseEvent *event) {
             // 编辑完成
         }
     }
+    else if(event->button() == Qt::RightButton) {
+        if(status == CUT) {
+            rubberBand->hide();
+            rubberBand = NULL;
+            cutEnd = event->pos();
+            drawCutArea();
+        }
+        else if(status == CUT_EDITING || status == CUT_MOVE)
+            status = CUT;
+    }
+}
+
+int test(double p, double q, double *u1, double *u2) {
+    int flag = 1;
+    double r;
+    if(p < 0) {
+        r = q / p;
+        if(r > *u2)
+            flag = 0;
+        else if(r > *u1)
+            *u1 = r;
+    }
+    else if(p > 0) {
+        r = q / p;
+        if(r < *u1)
+            flag = 0;
+        else if(r < *u2)
+            *u2 = r;
+    }
+    else if(q < 0)
+        flag = 0;
+    return flag;
+}
+
+void MyWidget::cutLine() {
+    int xMin = cutArea.left(), xMax = cutArea.right();
+    int yMin = cutArea.top(), yMax = cutArea.bottom();
+    int x1 = figure->getStartPoint().x(), y1 = figure->getStartPoint().y();
+    int x2 = figure->getEndPoint().x(), y2 = figure->getEndPoint().y();
+    double u1 = 0.0, u2 = 1.0, dx = x2 - x1, dy;
+    if(test(-dx, x1-xMin, &u1, &u2))
+        if(test(dx, xMax-x1, &u1, &u2)) {
+            dy = y2 - y1;
+            if(test(-dy, y1-yMin, &u1, &u2))
+                if(test(dy, yMax-y1, &u1, &u2)) {
+                    if(u2 < 1.0) {
+                        x2 = (int)(x1 + u2*dx);
+                        y2 = (int)(y1 + u2*dy);
+                    }
+                    if(u1 > 0) {
+                        x1 = (int)(x1 + u1*dx);
+                        y1 = (int)(y1 + u1*dy);
+                    }
+                }
+        }
+    tmp = pix;
+    figure->buffer.clear();
+    figure->controlBtn.clear();
+    figure->setStartPoint(QPoint(x1, y1));
+    figure->setEndPoint(QPoint(x2, y2));
+    figure->draw();
+    drawBuffer();
+    //withoutBtn = tmp;
+    figure->generateControlBtn();
+    drawControlBtn();
 }
 
 void MyWidget::moveFigure(QPoint point) {
@@ -899,6 +1032,29 @@ void MyWidget::drawCurve() {
     update();
 }
 
+void MyWidget::drawCutArea() {
+    cutArea = QRect(cutStart, cutEnd).normalized();
+    QPainter painter(&tmp);
+    QPen pen;
+    pen.setColor(Qt::blue);
+    pen.setStyle(Qt::DashLine);
+    painter.setPen(pen);
+    painter.drawRect(cutArea);
+
+    painter.setPen(QPen(Qt::black));
+    painter.setBrush(QBrush(Qt::white));
+    QPoint tmp = cutArea.topLeft();
+    painter.drawRect(tmp.x()-2, tmp.y()-2, 4, 4);
+    tmp = cutArea.topRight();
+    painter.drawRect(tmp.x()-2, tmp.y()-2, 4, 4);
+    tmp = cutArea.bottomLeft();
+    painter.drawRect(tmp.x()-2, tmp.y()-2, 4, 4);
+    tmp = cutArea.bottomRight();
+    painter.drawRect(tmp.x()-2, tmp.y()-2, 4, 4);
+
+    update();
+}
+
 void MyWidget::drawControlBtn() {
     /* 保存控制按钮原来的颜色 */
     /*
@@ -1028,6 +1184,7 @@ void MyWidget::clearAll() {
     status = READY;
     tmp = pix;
     withoutBtn = tmp;
+    pushPix(pix);
     update();
 }
 
@@ -1082,6 +1239,25 @@ int MyWidget::isInControlBtn(QPoint point) {
     }
 
     return -1;       
+}
+
+int MyWidget::isInCutBtn(QPoint point) {
+    if(abs(point.x() - cutArea.topLeft().x()) <= 2 && abs(point.y() - cutArea.topLeft().y()) <= 2)
+        return 0;
+    if(abs(point.x() - cutArea.bottomLeft().x()) <= 2 && abs(point.y() - cutArea.bottomLeft().y()) <= 2)
+        return 1;
+    if(abs(point.x() - cutArea.topRight().x()) <= 2 && abs(point.y() - cutArea.topRight().y()) <= 2)
+        return 2;
+    if(abs(point.x() - cutArea.bottomRight().x()) <= 2 && abs(point.y() - cutArea.bottomRight().y()) <= 2)
+        return 3;
+    return -1;
+}
+
+bool MyWidget::isInCutArea(QPoint point) {
+    if(point.x() >= cutArea.left() && point.x() <= cutArea.right() &&
+            point.y() >= cutArea.top() && point.y() <= cutArea.bottom())
+        return true;
+    return false;
 }
 
 int MyWidget::isInPolygonControlBtn(QPoint point) {

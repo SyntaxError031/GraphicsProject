@@ -8,6 +8,7 @@
 #include <QSpinBox>
 #include <QColorDialog>
 #include <QInputDialog>
+#include <QErrorMessage>
 
 namespace Ui {
 class MainWindow;
@@ -57,6 +58,7 @@ private:
     MyWidget *board;    // MainWindow上绘制图形的部分
     QLabel *label;      // 状态栏上显示状态
     QSpinBox *line_width;
+    QErrorMessage *errorDlg;
 };
 
 

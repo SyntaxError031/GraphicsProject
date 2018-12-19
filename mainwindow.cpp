@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     line_width->setSuffix(" px");
     ui->mainToolBar->addWidget(line_width);
     QObject::connect(line_width, SIGNAL(valueChanged(int)), this, SLOT(changeLineWidth()));
+    //errorDlg = new QErrorMessage(this);
 }
 
 MainWindow::~MainWindow()
@@ -135,3 +136,4 @@ void MainWindow::on_action_redo_triggered()
 {
     board->redo();
 }
+
