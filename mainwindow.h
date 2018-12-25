@@ -9,6 +9,8 @@
 #include <QColorDialog>
 #include <QInputDialog>
 #include <QErrorMessage>
+#include <QFileDialog>
+#include <QMessageBox>
 
 namespace Ui {
 class MainWindow;
@@ -53,12 +55,23 @@ private slots:
 
     void on_action_redo_triggered();
 
+    void on_action_N_triggered();
+
+    void on_action_S_triggered();
+
+    void on_action_O_triggered();
+
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private:
     Ui::MainWindow *ui;
     MyWidget *board;    // MainWindow上绘制图形的部分
     QLabel *label;      // 状态栏上显示状态
     QSpinBox *line_width;
-    QErrorMessage *errorDlg;
+//    QErrorMessage *errorDlg;
+//    QFileDialog *fileDlg;
+    QString path;
 };
 
 

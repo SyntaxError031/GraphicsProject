@@ -137,3 +137,49 @@ void MainWindow::on_action_redo_triggered()
     board->redo();
 }
 
+
+void MainWindow::on_action_N_triggered()
+{
+    // 询问是否保存
+    if(!board->isSaved) {   // 之前没有保存过
+        int ret = QMessageBox::question(this, tr("是否保存"), tr("你想将更改保存吗"), QMessageBox::Yes, QMessageBox::No);
+        if(ret == QMessageBox::Yes) {
+            path = QFileDialog::getSaveFileName(this, tr("保存图片"), tr(""), tr("Images (*.jpg)"));
+            if(!path.isEmpty())
+                board->save(path);
+        }
+    }
+    board->newBoard();
+}
+
+void MainWindow::on_action_S_triggered()
+{
+    if(!board->isSaved) {   // 之前没保存过
+        path = QFileDialog::getSaveFileName(this, tr("保存图片"), tr(""), tr("Images (*.jpg)"));
+        if(!path.isEmpty())
+            board->save(path);
+    }
+    else {      // 之前已经保存过
+        board->save(path);
+    }
+
+}
+
+void MainWindow::on_action_O_triggered()
+{
+    QString openPath = QFileDialog::getOpenFileName(this, tr("打开图片"), tr(""), tr("Images (*.jpg *.bmp *.png)"));
+    if(!openPath.isEmpty())
+        board->open(openPath);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(!board->isSaved) {   // 之前没有保存过
+        int ret = QMessageBox::question(this, tr("是否保存"), tr("你想将更改保存吗"), QMessageBox::Yes, QMessageBox::No);
+        if(ret == QMessageBox::Yes) {
+            path = QFileDialog::getSaveFileName(this, tr("保存图片"), tr(""), tr("Images (*.jpg)"));
+            if(!path.isEmpty())
+                board->save(path);
+        }
+    }
+}

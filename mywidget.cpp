@@ -8,7 +8,7 @@ MyWidget::MyWidget(QWidget *parent) :
     ui(new Ui::MyWidget)
 {
     ui->setupUi(this);
-    pix = QPixmap(800, 600);
+    pix = QPixmap(size());
     pix.fill(Qt::white);
     mode = NOTHING;
     status = READY;
@@ -24,6 +24,7 @@ MyWidget::MyWidget(QWidget *parent) :
     withoutBtn = tmp;
     pixmaps.push_back(pix);
     currentPix = 0;
+    isSaved = false;
 }
 
 MyWidget::~MyWidget()
@@ -965,7 +966,7 @@ void MyWidget::undo() {
 }
 
 void MyWidget::redo() {
-    if(currentPix < pixmaps.size()-1) {
+    if(currentPix < (int)pixmaps.size()-1) {
         currentPix++;
         tmp = pixmaps[currentPix];
         withoutBtn = tmp;
@@ -1170,13 +1171,77 @@ void MyWidget::clearBuffer() {
     */
 }
 
+void MyWidget::newBoard() {
+    clearAll();
+    pixmaps.clear();
+    pixmaps.push_back(pix);
+    currentPix = 0;
+    lineWidth = 1;
+    button = -1;
+    isSaved = false;
+}
+
+void MyWidget::save(QString path) {
+    isSaved = true;
+    if(status == EDITABLE) {
+        pushPix(withoutBtn);
+        status = READY;
+    }
+    else if(status == DRAWING) {
+        // 曲线和多边形正在绘制
+
+        if(polygon) {
+            // 把图画完
+            polygon->isEnd = true;
+            tmp = pix;
+            drawPolygon();
+            pix = tmp;
+            withoutBtn = tmp;
+            tmp = pix;
+            pushPix(pix);
+            polygon->~Polygon();
+            polygon = NULL;
+        }
+        else if(curve) {
+            pushPix(withoutBtn);
+            curve->~Curve();
+            curve = NULL;
+        }
+        status = READY;
+    }
+    tmp = withoutBtn;
+    pix = tmp;
+    pix.save(path, "JPG");
+}
+
+void MyWidget::open(QString path) {
+    newBoard();
+    QPixmap img;
+    img.load(path);
+    //tmp.load(path);
+    tmp = img;
+    pixmaps.clear();
+    pix = tmp;
+    withoutBtn = tmp;
+    pixmaps.push_back(pix);
+    currentPix = 0;
+    update();
+}
+
+
 void MyWidget::clearAll() {
     pix.fill(Qt::white);
     if(figure) {
-        figure->border.clear();
-        figure->buffer.clear();
-        figure->controlBtn.clear();
         figure->~SimpleFigure();
+        figure = NULL;
+    }
+    if(curve) {
+        curve->~Curve();
+        curve = NULL;
+    }
+    if(polygon) {
+        polygon->~Polygon();
+        polygon = NULL;
     }
     //preBuffer.clear();
     //preControlBtn.clear();
@@ -1326,7 +1391,7 @@ bool MyWidget::isOnLine(QPoint point) {
 
 void MyWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
-    painter.drawPixmap(0, 0, 800, 600, tmp);
+    painter.drawPixmap(QPoint(0,0), tmp);
 }
 
 

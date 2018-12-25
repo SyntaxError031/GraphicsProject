@@ -15,6 +15,7 @@
 #include <stack>
 #include <set>
 #include <queue>
+#include <string>
 
 //struct Point {
 //    int x, y;
@@ -72,11 +73,15 @@ public:
     void undo();
     void redo();
     void cutLine();
+    void newBoard();
+    void save(QString path);
+    void open(QString path);
 
     int mode;
     int lineWidth;
     QColor color;
     Status status;
+    bool isSaved;
     //int ratio;
 
 protected:
