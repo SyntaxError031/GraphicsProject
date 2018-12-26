@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle(tr("画图"));
+    setWindowIcon(QIcon(":/image/images/palette_48px_28678_easyicon.net.ico"));
     board = new MyWidget;
     board->setAttribute(Qt::WA_StyledBackground, true);
     board->setStyleSheet("background-color:rgb(210, 220, 255)");
@@ -77,7 +79,7 @@ void MainWindow::on_action_ellipse_triggered()
 
 void MainWindow::on_action_rectangle_triggered()
 {
-    board->mode = RECT;
+    board->mode = RECTANGLE;
     label->setText(" 矩形");
     board->status = READY;
 }
@@ -182,4 +184,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
                 board->save(path);
         }
     }
+}
+
+void MainWindow::on_action_3D_triggered()
+{
+    threeD = new ThreeDWindow(this);
+    threeD->setWindowModality(Qt::WindowModal);
+    threeD->show();
 }

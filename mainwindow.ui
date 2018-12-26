@@ -68,6 +68,7 @@
    <addaction name="action_undo"/>
    <addaction name="action_redo"/>
    <addaction name="action_clear"/>
+   <addaction name="action_3D"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="maximumSize">
@@ -278,6 +279,18 @@
    </property>
    <property name="toolTip">
     <string>重做</string>
+   </property>
+  </action>
+  <action name="action_3D">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/images/three_56.581005586592px_1153664_easyicon.net.png</normaloff>:/image/images/three_56.581005586592px_1153664_easyicon.net.png</iconset>
+   </property>
+   <property name="text">
+    <string>3D</string>
+   </property>
+   <property name="toolTip">
+    <string>三维模型</string>
    </property>
   </action>
  </widget>

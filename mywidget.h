@@ -17,22 +17,12 @@
 #include <queue>
 #include <string>
 
-//struct Point {
-//    int x, y;
-//    Point(int px, int py) { x = px, y = py; }
-//    bool operator < (const Point& p) const {
-//        if(x == p.x)
-//            return (y < p.y);
-//        else
-//            return (x < p.x);
-//    }
-//};
 
 namespace Ui {
 class MyWidget;
 }
 
-enum {NOTHING, PENCIL, LINE, CIRCLE, RECT, ELLIPSE, FILL, POLYGON, CURVE};
+enum {NOTHING, PENCIL, LINE, CIRCLE, RECTANGLE, ELLIPSE, FILL, POLYGON, CURVE};
 enum Status {READY, DRAWING, MOVE, EDITING, EDITABLE, CUT, CUT_READY, CUT_DRAWING, CUT_EDITABLE, CUT_MOVE, CUT_EDITING};
 
 class MyWidget : public QWidget
@@ -42,24 +32,16 @@ class MyWidget : public QWidget
 public:
     explicit MyWidget(QWidget *parent = nullptr);
     ~MyWidget();
-    void drawLine();
-    void drawCircle();
-    void pencilDraw();
-    void drawEllipse();
-    void drawRectangle();
+
     void drawBuffer();
-    void clearBuffer();
-    void drawControlBtn();
-    void clearControlBtn();
-    void drawPolygonControlBtn();
     void drawPolygon();
     void drawCurve();
-    void drawCurveControlBtn();
+    void drawControlBtn();
+
     int isInControlBtn(QPoint point);
-    int isInPolygonControlBtn(QPoint point);
     bool isInBorder(QPoint point);
-    bool isInPolygonBorder(QPoint point);
     bool isOnLine(QPoint point);
+
     void fill(QPoint seed);
     void clearAll();
     void moveFigure(QPoint point);
@@ -97,9 +79,7 @@ private:
     QPixmap withoutBtn;
     QPoint origin;
     SimpleFigure *figure;
-    vector<QColor> preBuffer;      // 保存编辑状态的点原来的颜色
     QRubberBand *rubberBand;
-    vector<vector<QColor>> preControlBtn;    // 存储绘制为控制按钮点以前的颜色
     bool isInWidget(int x, int y);
     int button;  // 编辑时按了哪个controlBtn
     int polygonBtn;

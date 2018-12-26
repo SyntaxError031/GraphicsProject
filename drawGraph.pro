@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -33,7 +34,9 @@ SOURCES += \
     ellipse.cpp \
     rectangle.cpp \
     polygon.cpp \
-    curve.cpp
+    curve.cpp \
+    threedwidget.cpp \
+    threedwindow.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,11 +47,15 @@ HEADERS += \
     ellipse.h \
     rectangle.h \
     polygon.h \
-    curve.h
+    curve.h \
+    threedwidget.h \
+    threedwindow.h
 
 FORMS += \
         mainwindow.ui \
-    mywidget.ui
+    mywidget.ui \
+    threedwidget.ui \
+    threedwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -57,3 +64,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     myimages.qrc
+
+
+LIBS += -lglut32 \
+    -lopengl32 \
+    -lglu32
+

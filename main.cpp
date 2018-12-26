@@ -5,6 +5,7 @@
 int main(int argc, char *argv[])
 {
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("GBK"));
+    glutInit(&argc, argv);
     QApplication a(argc, argv);
     MainWindow w;
     w.show();

@@ -11,6 +11,7 @@
 #include <QErrorMessage>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "threedwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -61,6 +62,8 @@ private slots:
 
     void on_action_O_triggered();
 
+    void on_action_3D_triggered();
+
 protected:
     void closeEvent(QCloseEvent *event);
 
@@ -72,6 +75,7 @@ private:
 //    QErrorMessage *errorDlg;
 //    QFileDialog *fileDlg;
     QString path;
+    ThreeDWindow *threeD;
 };
 
 
